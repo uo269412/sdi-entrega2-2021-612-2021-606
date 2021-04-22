@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es" class="h-100">
+<head th:replace="fragments/head" />
+<body class="d-flex h-100 text-center text-white bg-dark">
+    
+<nav th:replace="fragments/nav"></nav>
+<div class="container">
+		<div class="container">
+		<h2 th:text="#{listPurchased.users}">Ofertas Compradas</h2>
+		<p th:text="#{listPurchased.currentBought}">Las ofertadas compradas que figuran en el sistema son las siguientes:</p>
+		<div class="table-responsive">
+			<table class="table white">
+				<thead>
+					<tr>
+						<th th:text="#{listPurchased.title}">Titulo</th>
+						<th th:text="#{listPurchased.description}">Detalle</th>
+						<th th:text="#{listPurchased.price}">Precio</th>
+						<th th:text="#{listPurchased.sellerEmail}">Email del Vendedor</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${itemsListPurchased}">
+						<td th:text="${item.title}">Titulo de la oferta</td>
+						<td th:text="${item.description}">Descripción de la oferta</td>
+						<td th:text="${item.amount}">Precio de la oferta</td>
+						<td th:text="${item.user.email}">Email del vendedor</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+</div>
+<footer th:replace="fragments/footer"></footer>
+</body>

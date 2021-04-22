@@ -1,0 +1,44 @@
+<div class="cover d-flex h-100 p-3 mx-auto flex-column ">
+  <div class="logoWallapop">
+  <img src="/img/logo-wallapop.png" alt="logo" class="logoWallapop"/>
+  </div>
+  <header>
+    <div> 
+      <nav class="nav nav-masthead justify-content-center float-md-none" >
+        <a class="nav-link" href="/items/add" id="vender" th:text="#{nav.products}" sec:authorize="hasRole('ROLE_USER')">Vender</a>
+        <a class="nav-link" href="/items/listAll" id="buscar-ofertas" th:text="#{nav.searchItems}" sec:authorize="hasRole('ROLE_USER')">Buscar Ofertas</a>
+        <a class="nav-link" href="/user/list" id="gestion-usuarios" th:text="#{nav.manageUsers}" sec:authorize="hasRole('ROLE_ADMIN')">Gestionar Usuarios</a>
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.yourAccount}" sec:authorize="isAuthenticated()">
+            Tu cuenta
+          </a>
+          <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+          	<li id ="mis-ofertas">
+            <a id="lista-propios" class="dropdown-item" href="/items/listMine" th:text="#{nav.myItems}" sec:authorize="hasRole('ROLE_USER')">Mis Ofertas</a></li>
+            <li id="mis-compras">
+            <a id="lista-comprados" class="dropdown-item" href="/items/listPurchased" th:text="#{nav.myPurchases}" sec:authorize="hasRole('ROLE_USER')">Mis Compras</a></li>
+            <li id="mis-conversaciones">
+            <a id="lista-conversaciones" class="dropdown-item" href="/conversaciones/list" th:text="#{nav.convers}" sec:authorize="hasRole('ROLE_USER')">Mis Conversaciones</a></li>
+            <li id="logout">
+            <a id ="enlace-logout" class="dropdown-item" href="/logout" th:text="#{nav.logOut}">Desconectar</a></li>
+          </ul>
+    	 <a class="nav-link dropdown-toggle" name ="navbarDarkDropdownMenuLinkLanguage" style="margin-left: 10px;" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{language.change}">
+            Idioma
+          </a>
+          <ul id="languageDropdownMenuButton" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+            <li>
+            <a id="btnSpanish" value="ES" class="dropdown-item" href="#"><img th:src="@{/img/if_spain_flag.png}" style="border: 0; float: left; margin-right: 15px; margin-top: 6px" /> <span th:text="#{language.es}">Espa�ol</span></a></li>
+            <li>
+            <a id="btnEnglish" value="EN" class="dropdown-item" href="#"><img th:src="@{/img/if_uk_flag.png}" style="border: 0; float: left; margin-right: 15px; height: 16px; width: 16 px;; margin-top: 6px"/> <span th:text="#{language.en}">Ingl�s</span></a></li>
+          	<li>
+            <a id="btnFrench" value="FR" class="dropdown-item" href="#"><img th:src="@{/img/if_fr_flag.png}" style="border: 0; float: left; margin-right: 15px; max-width: 16px; margin-top: 6px" /><span th:text="#{language.fr}">Franc�s</span></a></li>
+            <li>
+            <a id="btnRussian" value="RS" class="dropdown-item" href="#"><img th:src="@{/img/if_rs_flag.png}" style="border: 0; float: left; margin-right: 15px;max-width: 16px; margin-top: 6px" /><span th:text="#{language.rs}">Ruso</span></a></li>
+            <li>
+            <a id="btnPortuguese" value="PT"class="dropdown-item" href="#"><img th:src="@{/img/if_pt_flag.png}" style="border: 0; float: left; margin-right: 15px;max-width: 16px; margin-top: 6px" /><span th:text="#{language.pt}">Portugu�s</span></a></li>
+          </ul>
+       	<a class="nav-link" style="margin-left: 10px;" sec:authorize="hasRole('ROLE_USER')"><span th:text="${user.email}"></span></a>
+		<a class="nav-link" id="userSaldo" name ="userSaldo" sec:authorize="hasRole('ROLE_USER')"><span id="userSaldo" name ="userSaldo" th:text="${user.saldo}"></span></a>
+      </nav>
+    </div>
+  </header>
+

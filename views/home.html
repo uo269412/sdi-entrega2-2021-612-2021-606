@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head" />
+<body class="d-flex h-100 text-center text-white bg-dark">
+	<nav th:replace="fragments/nav"></nav>
+	<div class="container" style="text-align: center">
+		<h2 th:text="#{welcome.message}">Bienvenidos a MyWallapop</h2>
+		<p th:text="#{welcome.private}">Esta es una zona privada la web</p>
+	</div>
+	<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

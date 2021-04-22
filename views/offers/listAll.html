@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es" class="h-100">
+<head th:replace="fragments/head" />
+<body class="d-flex h-100 text-center text-white bg-dark">
+    
+<nav th:replace="fragments/nav"></nav>
+<div class="container">
+		<form class="navbar-form searchS" action="/items/listAll">
+				<input name="searchText" type="text" class="form-control"  style="width: 60%; margin-left: 40px" size="50"
+					th:placeholder="#{listItems.byTitle}">
+				<button class="btn btn-lg btn-primary" name="search_button" style="width: 30%; margin-left: 10px" type="submit" th:text="#{listItems.searchButton}">Buscar</button>
+		</form>
+		<div class="container">
+		<h2 th:text="#{listItems.offers}">Ofertas</h2>
+		<p th:text="#{listItems.currentOffers}">Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
+		<div class="table-responsive">
+			<table class="table white">
+				<thead>
+					<tr>
+						<th th:text="#{listItems.title}">Titulo</th>
+						<th th:text="#{listItems.description}">Description</th>
+						<th th:text="#{listItems.price}">Precio</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${itemsList}">
+							<td th:text="${item.title}">Texto descriptivo de la oferta</td>
+							<td th:text="${item.description}">Detalle de la oferta</td>
+							<td th:text="${item.amount}">Cantidad solicitada (euros)</td>
+							<td>
+								<div th:if="${item.comprador == null}">
+									<form method="post" th:action ="${'/items/comprar/' + item.id}">
+										<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" th:text="#{listItems.buy}" >Comprar</button>
+										<span th:text="${message}"></span> 
+										
+									</form>
+								</div>
+								<div th:unless="${item.comprador == null}">
+									<button class="btn btn-lg btn-primary" style="margin-left: 10px" th:text="#{listItems.sold}" >Comprado</button>
+								</div>
+							</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+<footer th:replace="fragments/pagination"></footer>
+</div>
+<footer th:replace="fragments/footer">></footer>
+</body>

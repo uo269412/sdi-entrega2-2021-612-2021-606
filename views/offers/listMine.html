@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es" class="h-100">
+<head th:replace="fragments/head" />
+<body class="d-flex h-100 text-center text-white bg-dark">
+    
+<nav th:replace="fragments/nav"></nav>
+<div class="container">
+		<div class="container">
+		<h2 th:text="#{listMine.users}">Tus Ofertas</h2>
+		<p th:text="#{listMine.currentBought}">Tus ofertadas que figuran en el sistema son las siguientes:</p>
+		<div class="table-responsive">
+			<table class="table white">
+				<thead>
+					<tr>
+						<th th:text="#{listMine.title}">Titulo</th>
+						<th th:text="#{listMine.description}">Detalle</th>
+						<th th:text="#{listMine.price}">Precio</th>
+						<th ></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${itemsListMine}">
+						<td th:text="${item.title}">Titulo de la oferta</td>
+						<td th:text="${item.description}">Descripci�n de la oferta</td>
+						<td th:text="${item.amount}">Precio de la oferta</td>
+						<td><a
+							th:text="#{listMine.delete}"
+							th:href="${'/items/delete/' + item.id}">eliminar</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+</div>
+<footer th:replace="fragments/footer"/>
+</body>

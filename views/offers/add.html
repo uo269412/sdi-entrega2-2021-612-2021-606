@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../img/logowalla.png" type="image">
+    <title>MyWallapop</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="../css/signin.css" rel="stylesheet">
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    
+<main class="form-signin">
+   <form method="post" action ="/items/add" th:object="${item}">
+    <img class="mb-4" src="../img/logo-wallapop.png" alt="" width="300" height="127">
+    <h1 class="h3 mb-3 fw-normal" th:text="#{add.sell}">Vende tu producto</h1>
+        <label for="title" th:text="#{add.title}">Título:</label>
+    	<div class="col-sm-100">
+	    	<input type="text" id="title" class="form-control" name="title" for="title" th:placeholder="#{add.Addtitle}">
+	    		<span
+				class="text-danger" th:if="${#fields.hasErrors('title')}"
+				th:errors="*{title}"></span>
+		</div>
+       		
+    <label for="description" th:text="#{add.description}">Descripción:</label>
+    <input type="text" name = "description" id="description" class="form-control" for="description"  th:placeholder="#{add.addDescription}">
+  
+    
+    <label for="price" th:text="#{add.price}">Precio:</label>
+    <input type="text" name = "amount" id="price" class="form-control" for="amount" th:placeholder="#{add.addPrice}">
+    <br>
+    <button class="w-100 btn btn-lg btn-primary" type="submit" th:text="#{add.confirm}">Confirmar</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2021–2022</p>
+  </form>
+</main>
+
+
+    
+  </body>
+</html>
