@@ -35,6 +35,10 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
+//VARIABLES
+app.set('port', 8082);
+var MongoClient = require('mongodb').MongoClient;
+
 //ENCRIPTAR
 let crypto = require('crypto');
 let fileUpload = require('express-fileupload');
