@@ -38,9 +38,13 @@ app.use(expressSession({
 //VARIABLES
 app.set('port', 8082);
 var MongoClient = require('mongodb').MongoClient;
+app.set('db',"mongodb://admin:sdi@mywallapop-shard-00-00.g25pg.mongodb.net:27017,mywallapop-shard-00-01.g25pg.mongodb.net:27017,mywallapop-shard-00-02.g25pg.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-c18f3s-shard-0&authSource=admin&retryWrites=true&w=majority");
+
 
 //ENCRIPTAR
 let crypto = require('crypto');
+app.set('clave','abcdefg');
+app.set('crypto',crypto);
 let fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
