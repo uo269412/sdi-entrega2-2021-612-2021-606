@@ -39,19 +39,16 @@
     <link href="css/cover.css" rel="stylesheet">
   </head>
 <body class="d-flex h-100 text-center text-white bg-dark">
-    
-<nav th:replace="fragments/nav"></nav>
+
 
   <main class="px-3">
-    <h1 th:text="#{welcome.message}">Bienvenidos a MyWallapop</h1>
-    <p class="lead" th:text="#{welcome.description}">MyWallapop es una página web dedicada a la compra y venta de articulos de segunda mano</p>
+    <h1>Bienvenidos a MyWallapop</h1>
+    <p class="lead">MyWallapop es una página web dedicada a la compra y venta de articulos de segunda mano</p>
     <p class="lead">
-      <a href="/login" class="btn btn-lg btn-secondary fw-bold border-white bg-white" th:text="#{welcome.login}">Inicia sesión</a>
+      <a href="/identificarse" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Inicia sesión</a>
     </p>
     <p class="lead">
-      <a href="/signup" class="btn btn-lg btn-secondary fw-bold border-white bg-white" th:text="#{welcome.signup}">Registrate</a>
+      <a href="/registrarse" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Registrate</a>
     </p>
   </main>
-
-  <footer th:replace="fragments/footer"></footer>
 </body>
