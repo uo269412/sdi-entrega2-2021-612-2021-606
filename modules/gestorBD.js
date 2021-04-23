@@ -4,19 +4,19 @@ module.exports = { mongo : null, app : null,
         this.app = app;
     },
 
-    obtenerCancionesPg : function(criterio,pg,funcionCallback){
+    obtenerOfertasPg : function(criterio,pg,funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('canciones');
+                let collection = db.collection('ofertas');
                 collection.count(function(err, count){
                     collection.find(criterio).skip( (pg-1)*4 ).limit( 4 )
-                        .toArray(function(err, canciones) {
+                        .toArray(function(err, ofertas) {
                             if (err) {
                                 funcionCallback(null);
                             } else {
-                                funcionCallback(canciones, count);
+                                funcionCallback(ofertas, count);
                             }
                             db.close();
                         });
@@ -60,12 +60,12 @@ module.exports = { mongo : null, app : null,
         });
     },
 
-    eliminarCancion : function(criterio, funcionCallback) {
+    eliminarOferta : function(criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('canciones');
+                let collection = db.collection('ofertas');
                 collection.remove(criterio, function(err, result) {
                     if (err) {
                         funcionCallback(null);
@@ -164,43 +164,26 @@ module.exports = { mongo : null, app : null,
         }
     });
     },
-    obtenerCanciones : function(criterio, funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    obtenerOfertas : function(criterio, funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
         if (err) {
             funcionCallback(null);
         } else {
-            let collection = db.collection('canciones');
-            collection.find(criterio).toArray(function(err, canciones) {
+            let collection = db.collection('ofertas');
+            collection.find(criterio).toArray(function(err, ofertas) {
                 if (err) {
                     funcionCallback(null);
                 } else {
-                    funcionCallback(canciones);
+                    funcionCallback(ofertas);
                 } db.close();
             });
         }
     });
     },
-    modificarCancion : function(criterio, cancion, funcionCallback) {
-    this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    insertarOferta : function(cancion, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
         if (err) {
             funcionCallback(null);
         } else {
-            let collection = db.collection('canciones');
-            collection.update(criterio, {$set: cancion}, function(err, result) {
-                if (err) {
-                    funcionCallback(null);
-                } else {
-                    funcionCallback(result);
-                }
-                db.close();
-            });
-        }
-    });
-    },
-    insertarCancion : function(cancion, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
-        if (err) {
-            funcionCallback(null);
-        } else {
-            let collection = db.collection('canciones');
+            let collection = db.collection('ofertas');
             collection.insertOne(cancion, function(err, result) {
                 if (err) {
                     funcionCallback(null);

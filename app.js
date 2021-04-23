@@ -66,9 +66,6 @@ require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, 
 require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 
 //LANZAR EL SERVIDOR
-https.createServer({
-    key: fs.readFileSync('certificates/alice.key'),
-    cert: fs.readFileSync('certificates/alice.crt')
-}, app).listen(app.get('port'), function() {
+https.createServer({}, app).listen(app.get('port'), function() {
     console.log("Servidor activo");
 });

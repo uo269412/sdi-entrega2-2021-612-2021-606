@@ -14,7 +14,7 @@
   <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
 
   <!-- Bootstrap core CSS -->
-  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
     .bd-placeholder-img {
@@ -34,7 +34,7 @@
 
 
   <!-- Custom styles for this template -->
-  <link href="../css/cover.css" rel="stylesheet">
+  <link href="/css/cover.css" rel="stylesheet">
 </head>
 <body>
 
@@ -47,32 +47,27 @@
   <header>
     <div>
       <nav class="nav nav-masthead justify-content-center float-md-none" >
-        <a class="nav-link" href="/items/add" id="vender" th:text="#{nav.products}" sec:authorize="hasRole('ROLE_USER')">Vender</a>
-        <a class="nav-link" href="/items/listAll" id="buscar-ofertas" th:text="#{nav.searchItems}" sec:authorize="hasRole('ROLE_USER')">Buscar Ofertas</a>
-        <a class="nav-link" href="/user/list" id="gestion-usuarios" th:text="#{nav.manageUsers}" sec:authorize="hasRole('ROLE_ADMIN')">Gestionar Usuarios</a>
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.yourAccount}" sec:authorize="isAuthenticated()">
-          Tu cuenta
-        </a>
+        <a class="nav-link" href="/items/add" id="vender">Vender</a>
+        <a class="nav-link" href="/items/listAll" id="buscar-ofertas">Buscar Ofertas</a>
+        <a class="nav-link" href="/user/list" id="gestion-usuarios">Gestionar Usuarios</a>
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false"Tu cuenta>        </a>
         <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
           <li id ="mis-ofertas">
-            <a id="lista-propios" class="dropdown-item" href="/items/listMine" th:text="#{nav.myItems}" sec:authorize="hasRole('ROLE_USER')">Mis Ofertas</a></li>
+            <a id="lista-propios" class="dropdown-item" href="/items/listMine">Mis Ofertas</a></li>
           <li id="mis-compras">
-            <a id="lista-comprados" class="dropdown-item" href="/items/listPurchased" th:text="#{nav.myPurchases}" sec:authorize="hasRole('ROLE_USER')">Mis Compras</a></li>
+            <a id="lista-comprados" class="dropdown-item" href="/items/listPurchased">Mis Compras</a></li>
           <li id="mis-conversaciones">
-            <a id="lista-conversaciones" class="dropdown-item" href="/conversaciones/list" th:text="#{nav.convers}" sec:authorize="hasRole('ROLE_USER')">Mis Conversaciones</a></li>
+            <a id="lista-conversaciones" class="dropdown-item" href="/conversaciones/list">Mis Conversaciones</a></li>
           <li id="logout">
-            <a id ="enlace-logout" class="dropdown-item" href="/logout" th:text="#{nav.logOut}">Desconectar</a></li>
+            <a id ="enlace-logout" class="dropdown-item" href="/logout">Desconectar</a></li>
         </ul>
-        <a class="nav-link" style="margin-left: 10px;" sec:authorize="hasRole('ROLE_USER')"><span th:text="${user.email}"></span></a>
-        <a class="nav-link" id="userSaldo" name ="userSaldo" sec:authorize="hasRole('ROLE_USER')"><span id="userSaldo" name ="userSaldo" th:text="${user.saldo}"></span></a>
+
+        <a class="nav-link" style="margin-left: 10px;"><span></span></a>
+        <a class="nav-link" id="userSaldoA" name ="userSaldo" ><span id="userSaldo" name ="userSaldo"></span></a>
       </nav>
     </div>
   </header>
   </div>
-
-
-  //MANEJO MENSAJES
-
   <div class="container">
   <script>
     var mensaje = getUrlParameter('mensaje');
@@ -103,7 +98,7 @@
 
     <!-- Footer -->
     <footer class="mt-auto text-white-50">
-      <p th:text="#{footer.message}"> ©MyWallapop lider de compraventa en artículos de segunda mano.</p>
+      <p> ©MyWallapop lider de compraventa en artículos de segunda mano.</p>
     </footer>
 
 </div>

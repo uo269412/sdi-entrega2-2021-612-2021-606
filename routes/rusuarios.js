@@ -38,6 +38,9 @@ module.exports = function(app, swig, gestorBD) {
             .update(req.body.password).digest('hex');
         let usuario = {
             email : req.body.email,
+            name: req.body.name,
+            lastName: req.body.lastName,
+            saldo: 100.0,
             password : seguro
         }
 
@@ -52,27 +55,61 @@ module.exports = function(app, swig, gestorBD) {
 
     //items/listMine
     app.get("/propias", function(req, res) {
-        let criterio = { autor : req.session.usuario };
-        gestorBD.obtenerCanciones(criterio, function(canciones) {
+        let criterio = { vendedor : req.session.usuario };
+        gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (canciones == null) {
                 res.send("Error al listar ");
             } else {
-                let respuesta = swig.renderFile('views/bpublicaciones.html',
+                let respuesta = swig.renderFile('views/offers/listMine.html',
                     {
-                        canciones : canciones
+                        ofertas : ofertas
                     });
                 res.send(respuesta);
             }
         });
     });
 
-
     //items/listPurchased
     app.get("/compras", function(req, res) {
+        let criterio = { comprador : req.session.usuario };
+        gestorBD.obtenerCompras(criterio, function(compras) {
+            if (compras == null) {
+                res.send("Error al listar ");
+            } else {
+                let respuesta = swig.renderFile('views/offers/listPurchased.html',
+                    {
+                        compras : compras
+                    });
+                res.send(respuesta);
+            }
+        });
+    });
 
+    app.get("/usuarios", function(req, res) {
+        let criterio = {};
+        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+            if (usuarios == null) {
+                res.send("Error al listar");
+            } else {
+                let respuesta = swig.renderFile('views/user/list.html',
+                    {
+                        usuarios : usuarios
+                    });
+                res.send(respuesta);
+            }
+        });
     });
 
     app.get('/desconectarse', function (req, res) {
-        req.session.usuario = null; res.send("Usuario desconectado");
+        req.session.usuario = null;
+        res.send("Usuario desconectado");
+    });
+
+    app.get('/error/', function (req, res) {
+        let respuesta = swig.renderFile('views/error.html', {
+            mensaje: req.mensaje,
+            tipoMensaje: req.tipoMensaje
+        });
+        res.send(respuesta)
     });
 };
