@@ -77,45 +77,19 @@ module.exports = function(app, swig, gestorBD) {
 
     //items/comprar/{id}
     app.get("/oferta/comprar/:id", function(req, res) {
-        let ofertaId = gestorBD.mongo.ObjectID(req.params.id);
-        let usuario = req.session.usuario;
-
-        usuarioPuedeComprarOferta(usuario, ofertaId, function (comprar) {
-            if (comprar) {
-                let compra = {
-                    comprador: usuario,
-                    ofertaId: ofertaId
-                }
-                gestorBD.insertarCompra(compra, function (idCompra) {
-                    if (idCompra == null) {
-                        res.send(respuesta);
-                    } else {
-                        res.redirect("/compras");
-                    }
-                });
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let oferta = {
+            comprador: req.session.usuario,
+        }
+        gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
+            if (idCompra == null) {
+                res.send(respuesta);
             } else {
-                res.redirect("/error" + "?mensaje=Error al comprar la canción" + "&tipoMensaje=alert-danger");
+                res.redirect("/compras");
             }
         });
     });
 
-    function usuarioPuedeComprarOferta(usuario, ofertaId, funcionCallback) {
-        let criterio_oferta_vendedor = {$and: [{"_id": ofertaId}, {"vendedor": usuario}]};
-        let criterio_comprada = {$and: [{"cancionId": ofertaId}, {"comprador": usuario}]};
-        gestorBD.obtenerOfertas(criterio_oferta_vendedor, function (ofertas) {
-            if (ofertas == null || ofertas.length > 0) {
-                funcionCallback(false);
-            } else {
-                gestorBD.obtenerCompras(criterio_comprada, function (compras) {
-                    if (compras == null || compras.length > 0) {
-                        funcionCallback(false);
-                    } else {
-                        funcionCallback(true);
-                    }
-                });
-            }
-        });
-    }
 
     app.get('/home', function (req, res) {
         let respuesta = swig.renderFile('views/home.html', {});
@@ -127,19 +101,4 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta);
     });
 
-    app.get('/ofertas/propias', function (req, res) {
-        let criterio = {vendedor: req.session.usuario};
-        gestorBD.obtenerOfertas(criterio,function (ofertas) {
-            let respuesta = swig.renderFile('views/offers/listMine.html',
-                {
-                    ofertas: ofertas
-                });
-            res.send(respuesta);
-        });
-    });
-
-    app.get('/ofertas/compradas', function (req, res) {
-        let respuesta = swig.renderFile('views/offers/listPurchased.html', {});
-        res.send(respuesta);
-    });
 }

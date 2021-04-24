@@ -57,7 +57,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/propias", function(req, res) {
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
-            if (canciones == null) {
+            if (ofertas == null) {
                 res.send("Error al listar ");
             } else {
                 let respuesta = swig.renderFile('views/offers/listMine.html',
@@ -72,13 +72,13 @@ module.exports = function(app, swig, gestorBD) {
     //items/listPurchased
     app.get("/compras", function(req, res) {
         let criterio = { comprador : req.session.usuario };
-        gestorBD.obtenerCompras(criterio, function(compras) {
-            if (compras == null) {
+        gestorBD.obtenerOfertas(criterio, function(ofertas) {
+            if (ofertas == null) {
                 res.send("Error al listar ");
             } else {
                 let respuesta = swig.renderFile('views/offers/listPurchased.html',
                     {
-                        compras : compras
+                        ofertas : ofertas
                     });
                 res.send(respuesta);
             }

@@ -26,7 +26,7 @@
 								<td >{{oferta.precio}}€</td>
 								<td>
 									{% if oferta.comprador == null %}
-										<form method="post" action ="/offers/comprar/{{oferta._id.toString()}}" }>
+										<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
 											<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
 
 										</form>
