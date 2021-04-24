@@ -83,7 +83,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/ofertas", function(req, res) {
         let criterio = {};
         if (req.query.busqueda != null) {
-            criterio = {"titulo": / req.query.busqueda /};
+            criterio = {'titulo': {'$regex': req.query.busqueda}};
             console.log(req.query.busqueda);
         }
 
