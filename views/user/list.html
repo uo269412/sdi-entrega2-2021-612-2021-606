@@ -22,13 +22,13 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for user in userList %}
+				{% for usuario in usuarios %}
 						<td>
 							<input type="checkbox" id={{user.id}} name="checkbox">
 						</td>
-						<td> {{user.email}} </td>
-						<td>{{user.name}}</td>
-						<td>{{user.lastName}}</td>
+						<td> {{usuario.email}} </td>
+						<td>{{usuario.name}}</td>
+						<td>{{usuario.lastName}}</td>
 					</tr>
 				{% endfor %}
 				</tbody>

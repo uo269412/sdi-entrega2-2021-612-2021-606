@@ -32,6 +32,7 @@ module.exports = function(app, swig, gestorBD) {
         if (req.query.busqueda != null) {
             criterio = {"nombre": req.query.busqueda};
         }
+
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
             pg = 1;

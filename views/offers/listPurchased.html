@@ -15,11 +15,11 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for item in itemsListPurchased %}
-					<td>{{item.title}}</td>
-					<td>{{item.description}}</td>
-					<td>{{item.amount}}</td>
-					<td>{{item.user.email}}</td>
+			{% for oferta in ofertas %}
+					<td>{{oferta.titulo}}</td>
+					<td>{{oferta.descripcion}}</td>
+					<td>{{oferta.precio}}€</td>
+					<td>{{oferta.vendedor}}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

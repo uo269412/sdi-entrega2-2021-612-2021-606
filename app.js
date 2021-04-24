@@ -113,6 +113,7 @@ app.use("/cancion/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
 
 //routerUsuarioAutor
+
 let routerUsuarioAutor = express.Router();
 routerUsuarioAutor.use(function(req, res, next) {
     console.log("routerUsuarioAutor");
@@ -121,7 +122,7 @@ routerUsuarioAutor.use(function(req, res, next) {
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id) }, function (ofertas) {
             console.log(ofertas[0]);
-            if(ofertas[0].autor == req.session.usuario ){
+            if(ofertas[0].vendedor == req.session.usuario ){
                 next();
             } else {
                 res.redirect("/ofertas");

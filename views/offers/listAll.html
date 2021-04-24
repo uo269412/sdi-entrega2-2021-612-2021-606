@@ -2,8 +2,8 @@
 {% block titulo %} Listado Ofertas {% endblock %}
 {% block contenido_principal %}
 <div class="container">
-		<form class="navbar-form searchS" action="/items/listAll">
-				<input name="searchText" type="text" class="form-control btn-text" placeholder="Buscar por título" style="width: 60%; margin: auto;" size="50">
+		<form class="navbar-form searchS" action="/ofertas">
+				<input name="busqueda" type="text" class="form-control btn-text" placeholder="Buscar por título" style="width: 60%; margin: auto;" size="50">
 				<button class="btn btn-lg btn-primary btn-text" name="search_button" style="width: 30%; margin-left: 10px" type="submit" >Buscar</button>
 		</form>
 		<div class="container">
@@ -20,13 +20,13 @@
 						</tr>
 					</thead>
 					<tbody>
-					{% for item in itemList %}
-								<td >Texto descriptivo de la oferta</td>
-								<td >Detalle de la oferta</td>
-								<td >Cantidad solicitada (euros)</td>
+					{% for oferta in ofertas %}
+								<td >{{oferta.titulo}}</td>
+								<td >{{oferta.descripcion}}</td>
+								<td >{{oferta.precio}}€</td>
 								<td>
-									{% if item.comprador == null %}
-										<form method="post" action ="/offers/comprar/" item.id+ {{item.id}}}>
+									{% if oferta.comprador == null %}
+										<form method="post" action ="/offers/comprar/{{oferta._id.toString()}}" }>
 											<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
 
 										</form>
@@ -40,4 +40,16 @@
 				</table>
 			</div>
 		</div>
+</div>
+<div class="row text-center">
+	<ul class="pagination">
+		{% for pagina in paginas %}
+		<li class="page-item" id="pi-{{pagina}}" style="margin: auto">
+			<a class="page-link" href="/tienda?pg={{pagina}}">{{pagina}}</a>
+		</li>
+		{% endfor %}
+		<script>
+			$("#pi-" + "{{actual}}").addClass("active");
+		</script>
+	</ul>
 </div>
