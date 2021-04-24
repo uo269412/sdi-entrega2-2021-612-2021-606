@@ -1,11 +1,18 @@
 module.exports = function(app, swig, gestorBD) {
 
-    //items/add
+    /**
+     * Este controlador recibe la petición GET correspondiente a /ofertas/agregar y mediante swig manda que se renderice
+     * el fichero que muestra el formulario para añadir ofertas (add.html)
+     */
     app.get('/ofertas/agregar', function (req, res) {
         let respuesta = swig.renderFile('views/offers/add.html', {});
         res.send(respuesta);
     });
 
+    /**
+     * Esta función se encarga de validar el formulario mediante el cual se añaden las ofertas a vender. Comprueba que
+     * los campos no estén vacíos, además de que el precio este formateado como un número.
+     */
     function validaDatosRegistroOferta(oferta, errors, funcionCallback) {
         if (oferta.titulo === null || typeof oferta.titulo === 'undefined' ||
             oferta.titulo === "") {
@@ -31,7 +38,12 @@ module.exports = function(app, swig, gestorBD) {
         }
     }
 
-    //items/add
+    /**
+     * Este controlador recibe la petición POST /oferta, mediante la cual se recogen los datos de la vista (add.html) y
+     * se construye una oferta la cual se validará que está de forma correcta mediante la función
+     * validaDatosRegistroOferta. Si hay algún error, se mostrará en la página; mientras que en caso contrario, se
+     * insertará en la base de datos.
+     */
     app.post("/oferta", function(req, res) {
         let errors = new Array();
         let oferta = {
@@ -61,11 +73,18 @@ module.exports = function(app, swig, gestorBD) {
         })
     });
 
-    //items/listAll
+    /**
+     * Este controlador recibe la petición GET /ofertas, mediante la cual se obtienen las ofertas de la base de datosy
+     * de forma en la que se permite la paginación. Al utilizar la páginación que se encuentra en la vista, se volverá
+     * a refrescar la vista mediante el número de paginación que corresponde, además de los datos que estén contenidos
+     * en esa página. También se podrá utilizar una barra de búsqueda que servirá como criterio para filtrar aquellas
+     * ofertas que se correspondan con el nombre.
+     */
     app.get("/ofertas", function(req, res) {
         let criterio = {};
         if (req.query.busqueda != null) {
-            criterio = {"nombre": req.query.busqueda};
+            criterio = {"titulo": / req.query.busqueda /};
+            console.log(req.query.busqueda);
         }
 
         let pg = parseInt(req.query.pg);
@@ -100,7 +119,11 @@ module.exports = function(app, swig, gestorBD) {
     });
 
 
-    //items/delete/{id}
+    /**
+     * Este controlador recibe la petición GET /oferta/eliminar/:id, mediante la cual se selecciona la oferta en la
+     * base de datos que se corresponda con el id, para luego ser eliminada. Si la operación se realiza con éxito,
+     * se volverá a las ofertas propias.
+     */
     app.get("/oferta/eliminar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         gestorBD.eliminarOferta(criterio, function (oferta) {
@@ -112,7 +135,15 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-    //items/comprar/{id}
+    /**
+     * Este controlador recibe la petición GET /oferta/comprar/:id, mediante la cual el usuario en sesión podrá realizar
+     * la compra de una oferta que se haya seleccionado (la que se corresponda con el id). Primero para haber podido
+     * realizar esta petición, el usuario tiene que tener el dinero suficiente para comprarlo y que la oferta ya no
+     * esté comprada (esto se comprueba en las vistas). Si se llama a esta petición, esta actualizará al objeto,
+     * haciendo que el usuario se vuelva el comprador y le resta el dinero al usuario (Para esto hay que modificar
+     * el campo comprador de oferta, luego obtener la oferta de la base de datos para coger su precio y luego modificar
+     * al usuario con el nuevo sueldo que tendrá)
+     */
     app.get("/oferta/comprar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
@@ -148,12 +179,34 @@ module.exports = function(app, swig, gestorBD) {
             }
         });
     });
+    /**
+     * Este controlador recibe la petición GET /home, que manda al home.html datos del email y saldo del usuario en
+     * sesión
+     */
+    app.get('/home', function (req, res) {
+        let respuesta = swig.renderFile('views/home.html', {email: req.session.usuario, saldo: req.session.saldo});
+        res.send(respuesta);
+    });
 
+    /**
+     * Este controlador recibe la petición GET /, que renderiza la vista index.html
+     */
+    app.get('/', function (req, res) {
+        let respuesta = swig.renderFile('views/index.html', {});
+        res.send(respuesta);
+    });
+
+    /**
+     * Este controlador recibe la petición GET /oferta/nodestacar/:id
+     */
     app.get('/oferta/nodestacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         res.redirect('/propias');
     });
 
+    /**
+     * Este controlador recibe la petición GET /oferta/destacar/:id
+     */
     app.get('/oferta/destacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         res.redirect('/propias');
