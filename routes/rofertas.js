@@ -149,17 +149,6 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-    app.get('/home', function (req, res) {
-        let respuesta = swig.renderFile('views/home.html', {email: req.session.usuario, saldo: req.session.saldo});
-        res.send(respuesta);
-    });
-
-    app.get('/', function (req, res) {
-        let respuesta = swig.renderFile('views/index.html', {});
-        res.send(respuesta);
-    });
-
-
     app.get('/oferta/nodestacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         res.redirect('/propias');

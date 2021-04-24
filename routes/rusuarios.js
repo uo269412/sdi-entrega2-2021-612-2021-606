@@ -1,8 +1,4 @@
 module.exports = function(app, swig, gestorBD) {
-    app.get("/usuarios", function(req, res) {
-        res.send("ver usuarios");
-    });
-
     app.get("/registrarse", function(req, res) {
         let respuesta = swig.renderFile('views/signup.html', {});
         res.send(respuesta);
@@ -82,7 +78,7 @@ module.exports = function(app, swig, gestorBD) {
             password : seguro
         }
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+            if (usuarios == null || usuarios.length === 0) {
                 req.session.usuario = null;
                 res.redirect("/identificarse" +
                     "?mensaje=Email o password incorrecto"+
@@ -91,7 +87,11 @@ module.exports = function(app, swig, gestorBD) {
                 req.session.usuario = usuarios[0].email;
                 req.session.saldo = usuarios[0].saldo;
                 req.session.admin = usuarios[0].admin;
-                res.redirect("/home");
+                if (usuarios[0].admin === true){
+                    res.redirect("/usuarios");
+                }
+                else
+                    res.redirect("/home");
             }
         });
     });
@@ -113,7 +113,8 @@ module.exports = function(app, swig, gestorBD) {
                     {
                         ofertas : ofertas,
                         email: req.session.usuario,
-                        saldo: req.session.saldo
+                        saldo: req.session.saldo,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -131,7 +132,8 @@ module.exports = function(app, swig, gestorBD) {
                     {
                         ofertas : ofertas,
                         email: req.session.usuario,
-                        saldo: req.session.saldo
+                        saldo: req.session.saldo,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -139,14 +141,15 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get("/usuarios", function(req, res) {
-        let criterio = {};
+        let criterio = {admin: false};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null) {
                 res.send("Error al listar");
             } else {
                 let respuesta = swig.renderFile('views/user/list.html',
                     {
-                        usuarios : usuarios
+                        usuarios : usuarios,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -166,8 +169,13 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta)
     });
 
-    app.get('/user/list', function (req, res) {
-        let respuesta = swig.renderFile('views/user/list.html', {});
+    app.get('/home', function (req, res) {
+        let respuesta = swig.renderFile('views/home.html', {admin: req.session.admin,email: req.session.usuario, saldo: req.session.saldo});
+        res.send(respuesta);
+    });
+
+    app.get('/', function (req, res) {
+        let respuesta = swig.renderFile('views/index.html', {admin: req.session.admin});
         res.send(respuesta);
     });
 
