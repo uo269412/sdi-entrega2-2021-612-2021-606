@@ -179,7 +179,6 @@ module.exports = function(app, swig, gestorBD) {
             }
         });
     });
-
     /**
      * Este controlador recibe la petición GET /home, que manda al home.html datos del email y saldo del usuario en
      * sesión

@@ -1,5 +1,4 @@
 module.exports = function(app, swig, gestorBD) {
-
     /**
      * Este controlador recibe la petición GET /registrarse que renderiza la vista signup.html para que el usuario
      * pueda utilizar el formulario para registrarse y entrar dentro de la aplicación
@@ -98,7 +97,7 @@ module.exports = function(app, swig, gestorBD) {
             password : seguro
         }
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+            if (usuarios == null || usuarios.length === 0) {
                 req.session.usuario = null;
                 res.redirect("/identificarse" +
                     "?mensaje=Email o password incorrecto"+
@@ -107,7 +106,11 @@ module.exports = function(app, swig, gestorBD) {
                 req.session.usuario = usuarios[0].email;
                 req.session.saldo = usuarios[0].saldo;
                 req.session.admin = usuarios[0].admin;
-                res.redirect("/home");
+                if (usuarios[0].admin === true){
+                    res.redirect("/usuarios");
+                }
+                else
+                    res.redirect("/home");
             }
         });
     });
@@ -137,7 +140,8 @@ module.exports = function(app, swig, gestorBD) {
                     {
                         ofertas : ofertas,
                         email: req.session.usuario,
-                        saldo: req.session.saldo
+                        saldo: req.session.saldo,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -159,7 +163,8 @@ module.exports = function(app, swig, gestorBD) {
                     {
                         ofertas : ofertas,
                         email: req.session.usuario,
-                        saldo: req.session.saldo
+                        saldo: req.session.saldo,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -171,14 +176,15 @@ module.exports = function(app, swig, gestorBD) {
      * y se los pasará a la vista list.html
      */
     app.get("/usuarios", function(req, res) {
-        let criterio = {};
+        let criterio = {admin: false};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null) {
                 res.send("Error al listar");
             } else {
                 let respuesta = swig.renderFile('views/user/list.html',
                     {
-                        usuarios : usuarios
+                        usuarios : usuarios,
+                        admin: req.session.admin
                     });
                 res.send(respuesta);
             }
@@ -193,5 +199,13 @@ module.exports = function(app, swig, gestorBD) {
         req.session.saldo = null;
         req.session.admin = null;
         res.redirect("/");
+    });
+
+    app.get('/error/', function (req, res) {
+        let respuesta = swig.renderFile('views/error.html', {
+            mensaje: req.mensaje,
+            tipoMensaje: req.tipoMensaje
+        });
+        res.send(respuesta)
     });
 };

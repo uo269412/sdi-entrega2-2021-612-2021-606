@@ -46,23 +46,28 @@
   <header>
     <div>
       <nav class="nav nav-masthead justify-content-center float-md-none" >
+        {% if admin == false %}
         <a class="nav-link text-decoration-none margin-sides" href="/ofertas/agregar" id="vender">Vender</a>
         <a class="nav-link text-decoration-none margin-sides" href="/ofertas" id="buscar-ofertas">Buscar Ofertas</a>
-        <a class="nav-link text-decoration-none margin-sides" href="/user/list" id="gestion-usuarios">Gestionar Usuarios</a>
+        {% endif %}
         <a class="nav-link dropdown-toggle text-decoration-none margin-sides" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tu cuenta</a>
         <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+          {% if admin == false %}
           <li id ="mis-ofertas">
             <a id="lista-propios" class="dropdown-item btn-text" href="/propias">Mis Ofertas</a></li>
           <li id="mis-compras">
             <a id="lista-comprados" class="dropdown-item btn-text " href="/compras">Mis Compras</a></li>
           <li id="mis-conversaciones">
             <a id="lista-conversaciones" class="dropdown-item btn-text" href="/conversaciones/list">Mis Conversaciones</a></li>
+          {% endif %}
           <li id="logout">
             <a id ="enlace-logout" class="dropdown-item btn-text" href="/desconectarse">Desconectar</a></li>
         </ul>
 
         <a class="nav-link text-decoration-none" style="margin-left: 10px;">{{email}}</a>
+        {% if admin == false %}
         <a class="nav-link text-decoration-none" id="userSaldoA" name ="userSaldo">{{saldo}} €</a>
+        {% endif %}
       </nav>
     </div>
   </header>
