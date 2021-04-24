@@ -65,7 +65,9 @@ module.exports = function(app, swig, gestorBD) {
             } else {
                 let respuesta = swig.renderFile('views/offers/listMine.html',
                     {
-                        ofertas : ofertas
+                        ofertas : ofertas,
+                        email: req.session.usuario,
+                        saldo: req.session.saldo
                     });
                 res.send(respuesta);
             }
@@ -81,7 +83,9 @@ module.exports = function(app, swig, gestorBD) {
             } else {
                 let respuesta = swig.renderFile('views/offers/listPurchased.html',
                     {
-                        ofertas : ofertas
+                        ofertas : ofertas,
+                        email: req.session.usuario,
+                        saldo: req.session.saldo
                     });
                 res.send(respuesta);
             }

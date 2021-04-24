@@ -12,6 +12,7 @@
 					<th>Detalle</th>
 					<th>Precio</th>
 					<th></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -24,6 +25,21 @@
 					{% else %}
 						<td><a href='/oferta/eliminar/{{oferta._id.toString()}}'>eliminar</a></td>
 					{% endif %}
+					<td>
+						{% if oferta.destacada == true %}
+						<div>
+							<form method="post" action ='/oferta/nodestacar/{{oferta._id.toString()}}'>
+								<button class="btn btn-lg btn-primary" style="margin-left: 10px;background-color: #f44336; border-color:#f44336 " name="buttonDestacar" type="submit" >Destacada</button>
+							</form>
+						</div>
+						{% else %}
+						<div>
+							<form method="post" action ='/oferta/destacar/{{oferta._id.toString()}}'>
+								<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonDestacar" type="submit">Normal</button>
+							</form>
+						</div>
+						{% endif %}
+					</td>
 				</tr>
 			{% endfor %}
 			</tbody>
