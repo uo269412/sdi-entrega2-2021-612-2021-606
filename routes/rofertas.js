@@ -34,7 +34,7 @@ module.exports = function(app, swig, gestorBD) {
     //items/add
     app.post("/oferta", function(req, res) {
         let errors = new Array();
-        var oferta = {
+        let oferta = {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
             fechaSubida : new Date(),
@@ -128,7 +128,7 @@ module.exports = function(app, swig, gestorBD) {
                     if ( ofertas == null ){
                         res.send(respuesta);
                     } else {
-                        var nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
+                        let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
                         req.session.saldo = nuevoSaldo;
                         let usuario = {
                             saldo: nuevoSaldo
