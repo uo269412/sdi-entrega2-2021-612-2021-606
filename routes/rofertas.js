@@ -12,7 +12,7 @@ module.exports = function(app, swig, gestorBD) {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
             fechaSubida : new Date(),
-            precio : req.body.precio,
+            precio : parseFloat(req.body.precio),
             vendedor: req.session.usuario,
             comprador: null
         }
@@ -78,8 +78,12 @@ module.exports = function(app, swig, gestorBD) {
     //items/comprar/{id}
     app.get("/oferta/comprar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let criterioUsuarios = {"email": req.session.usuario};
+        console.log(req.session.usuario);
+        let usuario = req.session.usuario;
+
         let oferta = {
-            comprador: req.session.usuario
+            comprador: usuario
         }
         gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
             if (idCompra == null) {
@@ -89,27 +93,19 @@ module.exports = function(app, swig, gestorBD) {
                     if ( ofertas == null ){
                         res.send(respuesta);
                     } else {
-                        let criterioUsuario = {"email": req.session.usuario};
-                        gestorBD.obtenerUsuarios(criterioUsuario, function(usuarios) {
-                            if (usuarios == null || usuarios.length == 0) {
-                                req.session.usuario = null;
-                                res.redirect("/identificarse" +
-                                    "?mensaje=Email o password incorrecto"+
-                                    "&tipoMensaje=alert-danger ");
+                        var nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
+                        console.log(Number(nuevoSaldo));
+                        let usuario = {
+                            saldo: nuevoSaldo
+                        }
+                        gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                            if (idCompra == null) {
+                                res.send(respuesta);
                             } else {
-                                console.log(Number(usuarios[0].saldo) - Number(ofertas[0].precio))
-                                let usuarioNuevo = {
-                                    saldo: Number(usuarios[0].saldo) - Number(oferta.precio)
-                                }
-                                gestorBD.modificarUsuario(criterioUsuario, usuarioNuevo, function (idCompra) {
-                                    if (idCompra == null) {
-                                        res.send(respuesta);
-                                    } else {
-                                        res.redirect("/compras");
-                                    }
-                                });
+                                res.redirect("/compras");
                             }
                         });
+
                     }
                 });
             }

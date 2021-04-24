@@ -23,6 +23,7 @@ module.exports = function(app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
+                req.session.saldo = usuarios[0].saldo;
                 res.redirect("/home");
             }
         });
@@ -40,8 +41,9 @@ module.exports = function(app, swig, gestorBD) {
             email : req.body.email,
             name: req.body.name,
             lastName: req.body.lastName,
-            saldo: 100.0,
-            password : seguro
+            saldo: parseFloat("100"),
+            password : seguro,
+            admin: false
         }
 
         gestorBD.insertarUsuario(usuario, function(id) {
