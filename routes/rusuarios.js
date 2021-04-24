@@ -23,6 +23,8 @@ module.exports = function(app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
+                req.session.saldo = usuarios[0].saldo;
+                req.session.admin = usuarios[0].admin;
                 res.redirect("/home");
             }
         });
@@ -40,8 +42,9 @@ module.exports = function(app, swig, gestorBD) {
             email : req.body.email,
             name: req.body.name,
             lastName: req.body.lastName,
-            saldo: 100.0,
-            password : seguro
+            saldo: parseFloat("100"),
+            password : seguro,
+            admin: false
         }
 
         gestorBD.insertarUsuario(usuario, function(id) {
@@ -57,7 +60,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/propias", function(req, res) {
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
-            if (canciones == null) {
+            if (ofertas == null) {
                 res.send("Error al listar ");
             } else {
                 let respuesta = swig.renderFile('views/offers/listMine.html',
@@ -72,13 +75,13 @@ module.exports = function(app, swig, gestorBD) {
     //items/listPurchased
     app.get("/compras", function(req, res) {
         let criterio = { comprador : req.session.usuario };
-        gestorBD.obtenerCompras(criterio, function(compras) {
-            if (compras == null) {
+        gestorBD.obtenerOfertas(criterio, function(ofertas) {
+            if (ofertas == null) {
                 res.send("Error al listar ");
             } else {
                 let respuesta = swig.renderFile('views/offers/listPurchased.html',
                     {
-                        compras : compras
+                        ofertas : ofertas
                     });
                 res.send(respuesta);
             }

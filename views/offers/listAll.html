@@ -26,10 +26,15 @@
 								<td >{{oferta.precio}}€</td>
 								<td>
 									{% if oferta.comprador == null %}
-										<form method="post" action ="/offers/comprar/{{oferta._id.toString()}}" }>
-											<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
-
-										</form>
+										{% if Number(saldo) >= Number(oferta.precio) %}
+											<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+												<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
+											</form>
+										{% else %}
+											<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+												<button title="No tienes saldo suficiente para comprar esta oferta" class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" disabled>Comprar</button>
+											</form>
+										{% endif %}
 									{% else %}
 										<button class="btn btn-lg btn-primary" style="margin-left: 10px"  >Comprado</button>
 									{% endif %}
@@ -45,7 +50,7 @@
 	<ul class="pagination">
 		{% for pagina in paginas %}
 		<li class="page-item" id="pi-{{pagina}}" style="margin: auto">
-			<a class="page-link" href="/tienda?pg={{pagina}}">{{pagina}}</a>
+			<a class="page-link" href="/ofertas?pg={{pagina}}">{{pagina}}</a>
 		</li>
 		{% endfor %}
 		<script>

@@ -12,7 +12,7 @@ module.exports = function(app, swig, gestorBD) {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
             fechaSubida : new Date(),
-            precio : req.body.precio,
+            precio : parseFloat(req.body.precio),
             vendedor: req.session.usuario,
             comprador: null
         }
@@ -54,6 +54,7 @@ module.exports = function(app, swig, gestorBD) {
                 let respuesta = swig.renderFile('views/offers/listAll.html',
                     {
                         ofertas: ofertas,
+                        saldo: req.session.saldo,
                         paginas: paginas,
                         actual: pg
                     });
@@ -70,52 +71,48 @@ module.exports = function(app, swig, gestorBD) {
             if (oferta == null) {
                 res.send("Error");
             } else {
-                res.redirect("/ofertas/propias");
+                res.redirect("/propias");
             }
         });
     });
 
     //items/comprar/{id}
     app.get("/oferta/comprar/:id", function(req, res) {
-        let ofertaId = gestorBD.mongo.ObjectID(req.params.id);
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let criterioUsuarios = {"email": req.session.usuario};
+        console.log(req.session.usuario);
         let usuario = req.session.usuario;
 
-        usuarioPuedeComprarOferta(usuario, ofertaId, function (comprar) {
-            if (comprar) {
-                let compra = {
-                    comprador: usuario,
-                    ofertaId: ofertaId
-                }
-                gestorBD.insertarCompra(compra, function (idCompra) {
-                    if (idCompra == null) {
+        let oferta = {
+            comprador: usuario
+        }
+        gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
+            if (idCompra == null) {
+                res.send(respuesta);
+            } else {
+                gestorBD.obtenerOfertas(criterio,function(ofertas){
+                    if ( ofertas == null ){
                         res.send(respuesta);
                     } else {
-                        res.redirect("/compras");
+                        var nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
+                        console.log(Number(nuevoSaldo));
+                        let usuario = {
+                            saldo: nuevoSaldo
+                        }
+                        gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                            if (idCompra == null) {
+                                res.send(respuesta);
+                            } else {
+                                res.redirect("/compras");
+                            }
+                        });
+
                     }
                 });
-            } else {
-                res.redirect("/error" + "?mensaje=Error al comprar la canción" + "&tipoMensaje=alert-danger");
             }
         });
     });
 
-    function usuarioPuedeComprarOferta(usuario, ofertaId, funcionCallback) {
-        let criterio_oferta_vendedor = {$and: [{"_id": ofertaId}, {"vendedor": usuario}]};
-        let criterio_comprada = {$and: [{"cancionId": ofertaId}, {"comprador": usuario}]};
-        gestorBD.obtenerOfertas(criterio_oferta_vendedor, function (ofertas) {
-            if (ofertas == null || ofertas.length > 0) {
-                funcionCallback(false);
-            } else {
-                gestorBD.obtenerCompras(criterio_comprada, function (compras) {
-                    if (compras == null || compras.length > 0) {
-                        funcionCallback(false);
-                    } else {
-                        funcionCallback(true);
-                    }
-                });
-            }
-        });
-    }
 
     app.get('/home', function (req, res) {
         let respuesta = swig.renderFile('views/home.html', {});
@@ -127,19 +124,4 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta);
     });
 
-    app.get('/ofertas/propias', function (req, res) {
-        let criterio = {vendedor: req.session.usuario};
-        gestorBD.obtenerOfertas(criterio,function (ofertas) {
-            let respuesta = swig.renderFile('views/offers/listMine.html',
-                {
-                    ofertas: ofertas
-                });
-            res.send(respuesta);
-        });
-    });
-
-    app.get('/ofertas/compradas', function (req, res) {
-        let respuesta = swig.renderFile('views/offers/listPurchased.html', {});
-        res.send(respuesta);
-    });
 }
