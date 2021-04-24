@@ -83,7 +83,8 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/ofertas", function(req, res) {
         let criterio = {};
         if (req.query.busqueda != null) {
-            criterio = {"nombre": req.query.busqueda};
+            criterio = {"titulo": / req.query.busqueda /};
+            console.log(req.query.busqueda);
         }
 
         let pg = parseInt(req.query.pg);
