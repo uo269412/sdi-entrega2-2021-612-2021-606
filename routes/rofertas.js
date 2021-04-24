@@ -40,7 +40,8 @@ module.exports = function(app, swig, gestorBD) {
             fechaSubida : new Date(),
             precio : parseFloat(req.body.precio),
             vendedor: req.session.usuario,
-            comprador: null
+            comprador: null,
+            destacada: false
         }
         validaDatosRegistroOferta(oferta, errors, function (errors) {
             if (errors != null && errors.length > 0) {
@@ -90,7 +91,8 @@ module.exports = function(app, swig, gestorBD) {
                         ofertas: ofertas,
                         saldo: req.session.saldo,
                         paginas: paginas,
-                        actual: pg
+                        actual: pg,
+                        email: req.session.usuario
                     });
                 res.send(respuesta);
             }
@@ -147,15 +149,25 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-
     app.get('/home', function (req, res) {
-        let respuesta = swig.renderFile('views/home.html', {});
+        let respuesta = swig.renderFile('views/home.html', {email: req.session.usuario, saldo: req.session.saldo});
         res.send(respuesta);
     });
 
     app.get('/', function (req, res) {
         let respuesta = swig.renderFile('views/index.html', {});
         res.send(respuesta);
+    });
+
+
+    app.get('/oferta/nodestacar/:id', function (req, res) {
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        res.redirect('/propias');
+    });
+
+    app.get('/oferta/destacar/:id', function (req, res) {
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        res.redirect('/propias');
     });
 
 }

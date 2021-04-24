@@ -47,9 +47,9 @@
 		</div>
 </div>
 <div class="row text-center">
-	<ul class="pagination">
+	<ul class="pagination" style="width: 5vw;margin: auto">
 		{% for pagina in paginas %}
-		<li class="page-item" id="pi-{{pagina}}" style="margin: auto">
+		<li class="page-item" id="pi-{{pagina}}" >
 			<a class="page-link" href="/ofertas?pg={{pagina}}">{{pagina}}</a>
 		</li>
 		{% endfor %}
