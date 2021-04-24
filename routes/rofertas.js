@@ -95,7 +95,7 @@ module.exports = function(app, swig, gestorBD) {
                         res.send(respuesta);
                     } else {
                         var nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
-                        console.log(Number(nuevoSaldo));
+                        req.session.saldo = nuevoSaldo;
                         let usuario = {
                             saldo: nuevoSaldo
                         }
