@@ -6,9 +6,35 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta);
     });
 
+    function validaDatosRegistroOferta(oferta, errors, funcionCallback) {
+        if (oferta.titulo === null || typeof oferta.titulo === 'undefined' ||
+            oferta.titulo === "") {
+            errors.push("Se tiene que añadir un título")
+        }
+        if (oferta.descripcion === null || typeof oferta.descripcion === 'undefined' ||
+            oferta.descripcion === "") {
+            errors.push("Se tiene que añadir una descripción")
+        }
+        if (oferta.precio === null || typeof oferta.precio === 'undefined' ||
+            oferta.precio === "") {
+            errors.push("Se tiene que añadir un precio")
+        }
+        try {
+            Number(oferta.precio);
+        } catch (Exception) {
+            errors.push("El precio no es un número")
+        }
+        if (errors.length <= 0) {
+            funcionCallback(null)
+        } else {
+            funcionCallback(errors)
+        }
+    }
+
     //items/add
     app.post("/oferta", function(req, res) {
-        var oferta = {
+        let errors = new Array();
+        let oferta = {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
             fechaSubida : new Date(),
@@ -16,14 +42,22 @@ module.exports = function(app, swig, gestorBD) {
             vendedor: req.session.usuario,
             comprador: null
         }
-        // Conectarse
-        gestorBD.insertarOferta(oferta, function(id){
-            if (id == null) {
-                res.send("Error al insertar oferta");
+        validaDatosRegistroOferta(oferta, errors, function (errors) {
+            if (errors != null && errors.length > 0) {
+                let respuesta = swig.renderFile("views/offers/add.html", {
+                    errores: errors
+                })
+                res.send(respuesta);
             } else {
-                res.redirect("/home");
+                gestorBD.insertarOferta(oferta, function(id){
+                    if (id == null) {
+                        res.send("Error al insertar oferta");
+                    } else {
+                        res.redirect("/home");
+                    }
+                });
             }
-        });
+        })
     });
 
     //items/listAll
@@ -94,8 +128,8 @@ module.exports = function(app, swig, gestorBD) {
                     if ( ofertas == null ){
                         res.send(respuesta);
                     } else {
-                        var nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
-                        console.log(Number(nuevoSaldo));
+                        let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
+                        req.session.saldo = nuevoSaldo;
                         let usuario = {
                             saldo: nuevoSaldo
                         }
