@@ -1,13 +1,19 @@
 module.exports = function(app, swig, gestorBD) {
-    app.get("/usuarios", function(req, res) {
-        res.send("ver usuarios");
-    });
 
+    /**
+     * Este controlador recibe la petición GET /registrarse que renderiza la vista signup.html para que el usuario
+     * pueda utilizar el formulario para registrarse y entrar dentro de la aplicación
+     */
     app.get("/registrarse", function(req, res) {
         let respuesta = swig.renderFile('views/signup.html', {});
         res.send(respuesta);
     });
 
+    /**
+     * Esta función es la que se encarga de validar que los campos del formulario de registro contengan datos correctos.
+     * En caso contrario, se irán almacenando en un array una lista con los errores para que el usuario pueda ver
+     * aquellos campos que se encuentran incorrectos.
+     */
     function validaDatosRegistroUsuario(usuario, errors, password, passwordConfirm, funcionCallback) {
         if (usuario.email === null || typeof usuario.email === 'undefined' ||
             usuario.email === "") {
@@ -33,6 +39,13 @@ module.exports = function(app, swig, gestorBD) {
         }
     }
 
+    /**
+     * Este controlador recibe la petición POST /usuario que recoge los campos que el usuario ha rellenado del
+     * formulario de registrp e intenta que se pueda entrar en la aplicación como este usuario. Al ser un nuevo usuario,
+     * se comprobará que este usuario ya no existe. Además se comprueba que el formulario está completo. En caso
+     * correcto, se almacenará en sesión el email, el saldo y si es un administrador o no y se redireccionará
+     * a /home.html.
+     */
     app.post('/usuario', function(req, res) {
         let errors = new Array();
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
@@ -45,7 +58,6 @@ module.exports = function(app, swig, gestorBD) {
             password : seguro,
             admin: false
         }
-
         let criterioUsuarios = {"email": req.body.email};
         gestorBD.obtenerUsuarios(criterioUsuarios, function(usuarios) {
             if (!(usuarios == null || usuarios.length == 0)) {
@@ -73,8 +85,12 @@ module.exports = function(app, swig, gestorBD) {
         })
     });
 
+    /**
+     * Este controlador recibe la petición POST /identificarse que recoge los campos que el usuario ha rellenado del
+     * formulario de loggearse e intenta que se pueda entrar en la aplicación como este usuario. En caso correcto, se almacenará
+     * en sesión el email, el saldo y si es un administrador o no.
+     */
     app.post("/identificarse", function(req, res) {
-        let errores = new Array();
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {
@@ -96,13 +112,21 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
+    /**
+     * Este controlador recibe la petición GET /identificarse que renderiza la vista login.html para que el usuario
+     * pueda utilizar el formulario para identificarse y entrar dentro de la aplicación
+     */
     app.get("/identificarse", function(req, res) {
         let respuesta = swig.renderFile('views/login.html', {});
         res.send(respuesta);
     });
 
 
-    //items/listMine
+    /**
+     * Este controlador recibe la petición GET /propias que obtiene aquellas ofertas las cuales tienen como campo
+     * vendedor al usuario, es decir, las cuales el usuario oferta, para luego enviarlas a listMine.html
+     * que las lista.
+     */
     app.get("/propias", function(req, res) {
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
@@ -120,7 +144,11 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-    //items/listPurchased
+    /**
+     * Este controlador recibe la petición GET /compras que obtiene aquellas ofertas las cuales tienen como campo
+     * comprador al usuario, es decir, las cuales ha comprado el usuario, para luego enviarlas a listPurcharsed.html
+     * que las lista.
+     */
     app.get("/compras", function(req, res) {
         let criterio = { comprador : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
@@ -138,6 +166,10 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
+    /**
+     * Este controlador recibe la petición GET /usuarios, mediante la cual obtendrá los usuarios de la base de datos
+     * y se los pasará a la vista list.html
+     */
     app.get("/usuarios", function(req, res) {
         let criterio = {};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
@@ -153,22 +185,13 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
+    /**
+     * Este controlador recibe la petición GET /desconectarse, que desloggeará al usuario y redireccionará al index.html
+     */
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
+        req.session.saldo = null;
+        req.session.admin = null;
         res.redirect("/");
     });
-
-    app.get('/error/', function (req, res) {
-        let respuesta = swig.renderFile('views/error.html', {
-            mensaje: req.mensaje,
-            tipoMensaje: req.tipoMensaje
-        });
-        res.send(respuesta)
-    });
-
-    app.get('/user/list', function (req, res) {
-        let respuesta = swig.renderFile('views/user/list.html', {});
-        res.send(respuesta);
-    });
-
 };
