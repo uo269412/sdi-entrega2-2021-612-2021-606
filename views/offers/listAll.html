@@ -26,10 +26,15 @@
 								<td >{{oferta.precio}}€</td>
 								<td>
 									{% if oferta.comprador == null %}
-										<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
-											<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
-
-										</form>
+										{% if Number(saldo) >= Number(oferta.precio) %}
+											<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+												<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
+											</form>
+										{% else %}
+											<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+												<button title="No tienes saldo suficiente para comprar esta oferta" class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" disabled>Comprar</button>
+											</form>
+										{% endif %}
 									{% else %}
 										<button class="btn btn-lg btn-primary" style="margin-left: 10px"  >Comprado</button>
 									{% endif %}

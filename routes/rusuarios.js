@@ -24,6 +24,7 @@ module.exports = function(app, swig, gestorBD) {
             } else {
                 req.session.usuario = usuarios[0].email;
                 req.session.saldo = usuarios[0].saldo;
+                req.session.admin = usuarios[0].admin;
                 res.redirect("/home");
             }
         });

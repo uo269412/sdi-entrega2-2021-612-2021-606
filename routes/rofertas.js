@@ -54,6 +54,7 @@ module.exports = function(app, swig, gestorBD) {
                 let respuesta = swig.renderFile('views/offers/listAll.html',
                     {
                         ofertas: ofertas,
+                        saldo: req.session.saldo,
                         paginas: paginas,
                         actual: pg
                     });
