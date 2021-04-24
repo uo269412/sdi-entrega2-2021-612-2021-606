@@ -2,22 +2,22 @@
 {% block titulo %} Añadir oferta {% endblock %}
 {% block contenido_principal %}
 <main class="form-signin">
-   <form method="post" action ="/items/add" >
+   <form method="post" action ="/oferta" >
     <img class="mb-4" src="/static/logo-wallapop.png" alt="" width="300" height="127">
     <h1 class="h3 mb-3 fw-normal" >Vende tu producto</h1>
         <label for="title">Título:</label>
     	<div class="col-sm-100">
-	    	<input type="text" id="title" class="form-control" name="title" for="title" >
+	    	<input type="text" id="title" class="form-control" name="titulo" for="title" >
 	    		<span
 				class="text-danger"></span>
 		</div>
        		
     <label for="description">Descripción:</label>
-    <input type="text" name = "description" id="description" class="form-control" for="description">
+    <input type="text" name = "descripcion" id="description" class="form-control" for="description">
   
     
     <label for="price" >Precio:</label>
-    <input type="text" name = "amount" id="price" class="form-control" for="amount" >
+    <input type="text" name = "precio" id="price" class="form-control" for="amount" >
     <br>
     <button class="w-100 btn btn-lg btn-primary" type="submit" >Confirmar</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2021–2022</p>

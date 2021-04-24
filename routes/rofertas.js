@@ -9,18 +9,19 @@ module.exports = function(app, swig, gestorBD) {
     //items/add
     app.post("/oferta", function(req, res) {
         var oferta = {
-            nombre : req.body.nombre,
+            titulo : req.body.titulo,
             descripcion : req.body.descripcion,
-            fechaSubida : req.body.fechaSubida,
+            fechaSubida : new Date(),
             precio : req.body.precio,
-            vendedor: req.session.usuario
+            vendedor: req.session.usuario,
+            comprador: null
         }
         // Conectarse
         gestorBD.insertarOferta(oferta, function(id){
             if (id == null) {
                 res.send("Error al insertar oferta");
             } else {
-                res.redirect("/publicaciones");
+                res.redirect("/home");
             }
         });
     });
@@ -64,11 +65,11 @@ module.exports = function(app, swig, gestorBD) {
     //items/delete/{id}
     app.get("/oferta/eliminar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        gestorBD.eliminarOferta(criterio, function (ofertas) {
-            if (canciones == null) {
-                res.send(respuesta);
+        gestorBD.eliminarOferta(criterio, function (oferta) {
+            if (oferta == null) {
+                res.send("Error");
             } else {
-                res.redirect("/propias");
+                res.redirect("/ofertas/propias");
             }
         });
     });
@@ -126,8 +127,14 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get('/ofertas/propias', function (req, res) {
-        let respuesta = swig.renderFile('views/offers/listMine.html', {});
-        res.send(respuesta);
+        let criterio = {vendedor: req.session.usuario};
+        gestorBD.obtenerOfertas(criterio,function (ofertas) {
+            let respuesta = swig.renderFile('views/offers/listMine.html',
+                {
+                    ofertas: ofertas
+                });
+            res.send(respuesta);
+        });
     });
 
     app.get('/ofertas/compradas', function (req, res) {

@@ -15,11 +15,11 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for item in itemsListMine %}
-					<td>{{item.title}}</td>
-					<td>{{item.description}}</td>
-					<td>{{item.amount}}</td>
-					<td><a href='/items/delete/' + {{item.id}}>eliminar</a></td>
+			{% for oferta in ofertas %}
+					<td>{{oferta.titulo}}</td>
+					<td>{{oferta.descripcion}}</td>
+					<td>{{oferta.precio}}€</td>
+					<td><a href='/oferta/eliminar/{{oferta._id.toString()}}'>eliminar</a></td>
 				</tr>
 			{% endfor %}
 			</tbody>
