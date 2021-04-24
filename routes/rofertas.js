@@ -6,8 +6,34 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta);
     });
 
+    function validaDatosRegistroOferta(oferta, errors, funcionCallback) {
+        if (oferta.titulo === null || typeof oferta.titulo === 'undefined' ||
+            oferta.titulo === "") {
+            errors.push("Se tiene que añadir un título")
+        }
+        if (oferta.descripcion === null || typeof oferta.descripcion === 'undefined' ||
+            oferta.descripcion === "") {
+            errors.push("Se tiene que añadir una descripción")
+        }
+        if (oferta.precio === null || typeof oferta.precio === 'undefined' ||
+            oferta.precio === "") {
+            errors.push("Se tiene que añadir un precio")
+        }
+        try {
+            Number(oferta.precio);
+        } catch (Exception) {
+            errors.push("El precio no es un número")
+        }
+        if (errors.length <= 0) {
+            funcionCallback(null)
+        } else {
+            funcionCallback(errors)
+        }
+    }
+
     //items/add
     app.post("/oferta", function(req, res) {
+        let errors = new Array();
         var oferta = {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
@@ -16,14 +42,22 @@ module.exports = function(app, swig, gestorBD) {
             vendedor: req.session.usuario,
             comprador: null
         }
-        // Conectarse
-        gestorBD.insertarOferta(oferta, function(id){
-            if (id == null) {
-                res.send("Error al insertar oferta");
+        validaDatosRegistroOferta(oferta, errors, function (errors) {
+            if (errors != null && errors.length > 0) {
+                let respuesta = swig.renderFile("views/offers/add.html", {
+                    errores: errors
+                })
+                res.send(respuesta);
             } else {
-                res.redirect("/home");
+                gestorBD.insertarOferta(oferta, function(id){
+                    if (id == null) {
+                        res.send("Error al insertar oferta");
+                    } else {
+                        res.redirect("/home");
+                    }
+                });
             }
-        });
+        })
     });
 
     //items/listAll

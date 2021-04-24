@@ -21,7 +21,7 @@ module.exports = function(app, swig, gestorBD) {
             usuario.lastName === "") {
             errors.push("Se tiene que insertar un apellido")
         }
-        if ((password != passwordConfirm) || (usuario.password === null || typeof usuario.password === 'undefined' ||
+        if ((password !== passwordConfirm) || (usuario.password === null || typeof usuario.password === 'undefined' ||
             usuario.password === "") || (passwordConfirm === null || typeof passwordConfirm === 'undefined' ||
             passwordConfirm === "")) {
             errors.push("Las contraseñas no coinciden")
