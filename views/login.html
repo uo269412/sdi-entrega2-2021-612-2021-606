@@ -2,20 +2,17 @@
 {% block titulo %} Iniciar Sesión {% endblock %}
 {% block contenido_principal %}
 	<main class="form-signin">
-		<form method="post" action="/login" >
+		<form method="post" action="/identificarse" >
 			<img class="mb-4" src="static/logo-wallapop.png" alt="" width="300"
 				height="127">
 			<h1 class="h3 mb-3 fw-normal" >Iniciar
 				Sesión</h1>
-			<label for="inputEmail" >Email:</label> <input
-				type="email" id="inputEmail" class="form-control" name="username"
-				> <label for="inputPassword"
-				>Contraseña:</label>
+			<label for="inputEmail" >Email:</label>
+			<input type="email" id="inputEmail" class="form-control" name="email">
+			<label for="inputPassword">Contraseña:</label>
 			<div class="col-sm-100">
 				<input type="password" id="inputPassword" class="form-control"
-					name="password" > <span
-					></span> <span class="text-danger"
-					></span>
+					name="password" > <span></span> <span class="text-danger"></span>
 			</div>
 			<button class="w-100 btn btn-lg btn-primary" type="submit"
 				>Iniciar Sesión</button>
