@@ -70,7 +70,7 @@ module.exports = function(app, swig, gestorBD) {
             if (oferta == null) {
                 res.send("Error");
             } else {
-                res.redirect("/ofertas/propias");
+                res.redirect("/propias");
             }
         });
     });
@@ -79,13 +79,39 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/oferta/comprar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let oferta = {
-            comprador: req.session.usuario,
+            comprador: req.session.usuario
         }
         gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
             if (idCompra == null) {
                 res.send(respuesta);
             } else {
-                res.redirect("/compras");
+                gestorBD.obtenerOfertas(criterio,function(ofertas){
+                    if ( ofertas == null ){
+                        res.send(respuesta);
+                    } else {
+                        let criterioUsuario = {"email": req.session.usuario};
+                        gestorBD.obtenerUsuarios(criterioUsuario, function(usuarios) {
+                            if (usuarios == null || usuarios.length == 0) {
+                                req.session.usuario = null;
+                                res.redirect("/identificarse" +
+                                    "?mensaje=Email o password incorrecto"+
+                                    "&tipoMensaje=alert-danger ");
+                            } else {
+                                console.log(Number(usuarios[0].saldo) - Number(ofertas[0].precio))
+                                let usuarioNuevo = {
+                                    saldo: Number(usuarios[0].saldo) - Number(oferta.precio)
+                                }
+                                gestorBD.modificarUsuario(criterioUsuario, usuarioNuevo, function (idCompra) {
+                                    if (idCompra == null) {
+                                        res.send(respuesta);
+                                    } else {
+                                        res.redirect("/compras");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         });
     });
