@@ -111,6 +111,8 @@ app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
 app.use("/cancion/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
+app.use("/ofertas",routerUsuarioSession);
+app.use("/conversaciones/list",routerUsuarioSession);
 
 //routerUsuarioAutor
 

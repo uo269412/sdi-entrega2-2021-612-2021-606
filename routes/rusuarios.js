@@ -208,4 +208,26 @@ module.exports = function(app, swig, gestorBD) {
         });
         res.send(respuesta)
     });
+
+    app.post('/usuarios/eliminar', function (req, res) {
+        let criterio = [];
+        if (typeof req.body.deleteUser === "string"){
+            criterio.push({"_id": gestorBD.mongo.ObjectID(req.body.deleteUser)});
+        }else{
+            let usersMarked = req.body.deleteUser;
+
+            for (let user of usersMarked) {
+                criterio.push({"_id": gestorBD.mongo.ObjectID(user)});
+            }
+        }
+        let criterioFinal = {"$or": criterio};
+        gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
+            if (usuarios == null) {
+                res.send("No hay ningún usuario que borrar");
+            } else {
+                res.redirect('/usuarios');
+            }
+        });
+
+    });
 };
