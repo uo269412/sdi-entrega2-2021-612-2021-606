@@ -132,11 +132,10 @@ routerUsuarioAutor.use(function(req, res, next) {
 //Aplicar routerUsuarioAutor
 app.use("/oferta/eliminar",routerUsuarioAutor);
 
-
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-
+require("./routes/rconversaciones.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 //LANZAR EL SERVIDOR
 https.createServer({}, app).listen(app.get('port'), function() {
     console.log("Servidor activo");

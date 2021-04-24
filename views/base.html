@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
-  <link rel="icon" href="img/logowalla.png" type="image">
-  <title>MyWallapop</title>
+  <link rel="icon" href="/static/logoWalla.png" type="image">
+  <title>{% block titulo %} My Wallapop {% endblock %} </title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
   <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
 
   <!-- Bootstrap core CSS -->
   <link href="/css/bootstrap.min.css" rel="stylesheet">
-
+  {% block scripts %} {% endblock %}
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -36,30 +35,30 @@
   <!-- Custom styles for this template -->
   <link href="/css/cover.css" rel="stylesheet">
 </head>
-<body>
+<body class="d-flex h-100 text-center text-white bg-dark text-large">
 
 
 <!-- Barra de Navegación superior -->
 <div class="cover d-flex h-100 p-3 mx-auto flex-column ">
   <div class="logoWallapop">
-    <img src="/img/logo-wallapop.png" alt="logo" class="logoWallapop"/>
+    <img src="/static/logo-wallapop.png" alt="logo" class="logoWallapop"/>
   </div>
   <header>
     <div>
       <nav class="nav nav-masthead justify-content-center float-md-none" >
-        <a class="nav-link" href="/items/add" id="vender">Vender</a>
-        <a class="nav-link" href="/items/listAll" id="buscar-ofertas">Buscar Ofertas</a>
-        <a class="nav-link" href="/user/list" id="gestion-usuarios">Gestionar Usuarios</a>
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false"Tu cuenta>        </a>
+        <a class="nav-link text-decoration-none margin-sides" href="/ofertas/agregar" id="vender">Vender</a>
+        <a class="nav-link text-decoration-none margin-sides" href="/ofertas" id="buscar-ofertas">Buscar Ofertas</a>
+        <a class="nav-link text-decoration-none margin-sides" href="/user/list" id="gestion-usuarios">Gestionar Usuarios</a>
+        <a class="nav-link dropdown-toggle text-decoration-none margin-sides" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tu cuenta</a>
         <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
           <li id ="mis-ofertas">
-            <a id="lista-propios" class="dropdown-item" href="/items/listMine">Mis Ofertas</a></li>
+            <a id="lista-propios" class="dropdown-item btn-text" href="/ofertas/propias">Mis Ofertas</a></li>
           <li id="mis-compras">
-            <a id="lista-comprados" class="dropdown-item" href="/items/listPurchased">Mis Compras</a></li>
+            <a id="lista-comprados" class="dropdown-item btn-text " href="/ofertas/compradas">Mis Compras</a></li>
           <li id="mis-conversaciones">
-            <a id="lista-conversaciones" class="dropdown-item" href="/conversaciones/list">Mis Conversaciones</a></li>
+            <a id="lista-conversaciones" class="dropdown-item btn-text" href="/conversaciones/list">Mis Conversaciones</a></li>
           <li id="logout">
-            <a id ="enlace-logout" class="dropdown-item" href="/logout">Desconectar</a></li>
+            <a id ="enlace-logout" class="dropdown-item btn-text" href="/desconectarse">Desconectar</a></li>
         </ul>
 
         <a class="nav-link" style="margin-left: 10px;"><span></span></a>
@@ -67,8 +66,8 @@
       </nav>
     </div>
   </header>
-  </div>
-  <div class="container">
+
+
   <script>
     var mensaje = getUrlParameter('mensaje');
     var tipoMensaje = getUrlParameter('tipoMensaje');
@@ -91,16 +90,17 @@
               decodeURIComponent(results[1].replace(/\+/g, ' '));
     };
   </script>
+
+  <div style="margin-top: 15px">
   <!-- Contenido -->
   {% block contenido_principal %}
   <!-- Posible contenido por defecto -->
   {% endblock %}
-
+  </div>
     <!-- Footer -->
-    <footer class="mt-auto text-white-50">
-      <p> ©MyWallapop lider de compraventa en artículos de segunda mano.</p>
-    </footer>
-
-</div>
+  <footer class="mt-auto text-white-50">
+    <p> ©MyWallapop lider de compraventa en artículos de segunda mano.</p>
+  </footer>
+  </div>
 </body>
 </html>

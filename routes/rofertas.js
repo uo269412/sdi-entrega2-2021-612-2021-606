@@ -2,7 +2,7 @@ module.exports = function(app, swig, gestorBD) {
 
     //items/add
     app.get('/ofertas/agregar', function (req, res) {
-        let respuesta = swig.renderFile('views/bagregar.html', {});
+        let respuesta = swig.renderFile('views/offers/add.html', {});
         res.send(respuesta);
     });
 
@@ -49,7 +49,7 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                let respuesta = swig.renderFile('views/listAll.html',
+                let respuesta = swig.renderFile('views/offers/listAll.html',
                     {
                         ofertas: ofertas,
                         paginas: paginas,
@@ -115,4 +115,23 @@ module.exports = function(app, swig, gestorBD) {
         });
     }
 
+    app.get('/home', function (req, res) {
+        let respuesta = swig.renderFile('views/home.html', {});
+        res.send(respuesta);
+    });
+
+    app.get('/', function (req, res) {
+        let respuesta = swig.renderFile('views/index.html', {});
+        res.send(respuesta);
+    });
+
+    app.get('/ofertas/propias', function (req, res) {
+        let respuesta = swig.renderFile('views/offers/listMine.html', {});
+        res.send(respuesta);
+    });
+
+    app.get('/ofertas/compradas', function (req, res) {
+        let respuesta = swig.renderFile('views/offers/listPurchased.html', {});
+        res.send(respuesta);
+    });
 }

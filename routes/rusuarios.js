@@ -4,7 +4,7 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get("/registrarse", function(req, res) {
-        let respuesta = swig.renderFile('views/bregistro.html', {});
+        let respuesta = swig.renderFile('views/signup.html', {});
         res.send(respuesta);
     });
 
@@ -29,7 +29,7 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get("/identificarse", function(req, res) {
-        let respuesta = swig.renderFile('views/bidentificacion.html', {});
+        let respuesta = swig.renderFile('views/login.html', {});
         res.send(respuesta);
     });
 
@@ -102,7 +102,7 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
-        res.send("Usuario desconectado");
+        res.redirect("/");
     });
 
     app.get('/error/', function (req, res) {
@@ -112,4 +112,10 @@ module.exports = function(app, swig, gestorBD) {
         });
         res.send(respuesta)
     });
+
+    app.get('/user/list', function (req, res) {
+        let respuesta = swig.renderFile('views/user/list.html', {});
+        res.send(respuesta);
+    });
+
 };
