@@ -5,7 +5,9 @@ module.exports = function(app, swig, gestorBD) {
      * el fichero que muestra el formulario para añadir ofertas (add.html)
      */
     app.get('/ofertas/agregar', function (req, res) {
-        let respuesta = swig.renderFile('views/offers/add.html', {});
+        let respuesta = swig.renderFile('views/offers/add.html', {
+            saldo: req.session.saldo
+        });
         res.send(respuesta);
     });
 
@@ -46,6 +48,21 @@ module.exports = function(app, swig, gestorBD) {
      */
     app.post("/oferta", function(req, res) {
         let errors = new Array();
+        let estaDestacada = false;
+        if (req.body.estaDestacada != null) {
+            estaDestacada = true;
+            let criterioUsuarios = {"email": req.session.usuario};
+            let nuevoSaldo = Number(req.session.saldo) - 20;
+            req.session.saldo = nuevoSaldo;
+            let usuario = {
+                saldo: nuevoSaldo
+            }
+            gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                if (idCompra == null) {
+                    res.send(respuesta);
+                }
+            });
+        }
         let oferta = {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
@@ -53,7 +70,7 @@ module.exports = function(app, swig, gestorBD) {
             precio : parseFloat(req.body.precio),
             vendedor: req.session.usuario,
             comprador: null,
-            destacada: false
+            destacada: estaDestacada
         }
         validaDatosRegistroOferta(oferta, errors, function (errors) {
             if (errors != null && errors.length > 0) {
@@ -95,8 +112,8 @@ module.exports = function(app, swig, gestorBD) {
             if (ofertas == null) {
                 res.redirect("/error" + "?mensaje=Error al listar." + "&tipoMensaje=alert-danger");
             } else {
-                let ultimaPg = total / 4;
-                if (total % 4 > 0) { // Sobran decimales
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
@@ -149,11 +166,10 @@ module.exports = function(app, swig, gestorBD) {
         let criterioUsuarios = {"email": req.session.usuario};
         console.log(req.session.usuario);
         let usuario = req.session.usuario;
-
         let oferta = {
             comprador: usuario
         }
-        gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
+        gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
             if (idCompra == null) {
                 res.send(respuesta);
             } else {
@@ -162,18 +178,21 @@ module.exports = function(app, swig, gestorBD) {
                         res.send(respuesta);
                     } else {
                         let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
-                        req.session.saldo = nuevoSaldo;
-                        let usuario = {
-                            saldo: nuevoSaldo
-                        }
-                        gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
-                            if (idCompra == null) {
-                                res.send(respuesta);
-                            } else {
-                                res.redirect("/compras");
+                        if (nuevoSaldo >= 0) {
+                            req.session.saldo = nuevoSaldo;
+                            let usuario = {
+                                saldo: nuevoSaldo
                             }
-                        });
-
+                            gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                                if (idCompra == null) {
+                                    res.send(respuesta);
+                                } else {
+                                    res.redirect("/compras");
+                                }
+                            });
+                        } else {
+                            res.send(respuesta);
+                        }
                     }
                 });
             }
@@ -197,19 +216,74 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     /**
-     * Este controlador recibe la petición GET /oferta/nodestacar/:id
+     * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método
+     * del gestor de base de datos, uno encargado de buscar el id de la oferta que se quiere destacar y otro el email
+     * del usuario que está en sesión (que es el vendedor de la oferta). Luego llama a la función destacarOferta
+     * utilizando como parámetros los dos criterios y un false indicando que se quiere no destacar la oferta.
      */
-    app.get('/oferta/nodestacar/:id', function (req, res) {
+    app.post('/oferta/nodestacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        res.redirect('/propias');
+        let criterioUsuarios = {"email": req.session.usuario};
+        destacarOferta(criterio, criterioUsuarios, false, req, res);
     });
 
     /**
-     * Este controlador recibe la petición GET /oferta/destacar/:id
+     * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método
+     * del gestor de base de datos, uno encargado de buscar el id de la oferta que se quiere destacar y otro el email
+     * del usuario que está en sesión (que es el vendedor de la oferta). Luego llama a la función destacarOferta
+     * utilizando como parámetros los dos criterios y un true indicando que se quiere destacar la oferta.
      */
-    app.get('/oferta/destacar/:id', function (req, res) {
+    app.post('/oferta/destacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        res.redirect('/propias');
+        let criterioUsuarios = {"email": req.session.usuario};
+        destacarOferta(criterio, criterioUsuarios, true, req, res);
     });
+
+
+    /**
+     * Esta función se encarga, a partir de los dos criterios recibidos y de si la oferta se puede destacar o no.
+     * Primero esta función creará una oferta que tendrá de valor destacada el que le hemos pasado por parámetro, luego
+     * se llamará a la base de datos que se encargará de modificar esta oferta cambiando su campo destacado. Si esta
+     * gestión se realiza correctamente, se creará un nuevo saldo para el usuario que partirá del base, y dependiendo
+     * de si está destacando o dejando de destacar, le bajará o aumentará el saldo en 20. Después se actualiza en la
+     * base de datos y se vuelve al listado de propias.
+     * @param criterio que sirve para obtener la oferta que se corresponde con el id y así se pueda modificar
+     * @param criterioUsuarios que sirve para obtener el usuario que corresponde con el id y así se modifique
+     * @param destacar booleano que establece si se quiere destacar la oferta del controlador
+     * @param req proveniente del controlador
+     * @param res proveniente del controlador
+     */
+    function destacarOferta(criterio, criterioUsuarios, destacar, req, res) {
+        let oferta = {
+            destacada: destacar
+        }
+        gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
+            if (idCompra == null) {
+                res.send(respuesta);
+            } else {
+                let nuevoSaldo = Number(req.session.saldo);
+                if (destacar) {
+                    nuevoSaldo -= 20;
+                } else {
+                    nuevoSaldo += 20;
+                }
+                if (nuevoSaldo >= 0) {
+                    req.session.saldo = nuevoSaldo;
+                    let usuario = {
+                        saldo: nuevoSaldo
+                    }
+                    gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                        if (idCompra == null) {
+                            res.send(respuesta);
+                        } else {
+                            res.redirect("/propias");
+                        }
+                    });
+                } else {
+                    res.send(respuesta);
+                }
+            }
+        });
+    }
 
 }
