@@ -178,17 +178,21 @@ module.exports = function(app, swig, gestorBD) {
                         res.send(respuesta);
                     } else {
                         let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
-                        req.session.saldo = nuevoSaldo;
-                        let usuario = {
-                            saldo: nuevoSaldo
-                        }
-                        gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
-                            if (idCompra == null) {
-                                res.send(respuesta);
-                            } else {
-                                res.redirect("/compras");
+                        if (nuevoSaldo >= 0) {
+                            req.session.saldo = nuevoSaldo;
+                            let usuario = {
+                                saldo: nuevoSaldo
                             }
-                        });
+                            gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                                if (idCompra == null) {
+                                    res.send(respuesta);
+                                } else {
+                                    res.redirect("/compras");
+                                }
+                            });
+                        } else {
+                            res.send(respuesta);
+                        }
                     }
                 });
             }
@@ -263,17 +267,21 @@ module.exports = function(app, swig, gestorBD) {
                 } else {
                     nuevoSaldo += 20;
                 }
-                req.session.saldo = nuevoSaldo;
-                let usuario = {
-                    saldo: nuevoSaldo
-                }
-                gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
-                    if (idCompra == null) {
-                        res.send(respuesta);
-                    } else {
-                        res.redirect("/propias");
+                if (nuevoSaldo >= 0) {
+                    req.session.saldo = nuevoSaldo;
+                    let usuario = {
+                        saldo: nuevoSaldo
                     }
-                });
+                    gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                        if (idCompra == null) {
+                            res.send(respuesta);
+                        } else {
+                            res.redirect("/propias");
+                        }
+                    });
+                } else {
+                    res.send(respuesta);
+                }
             }
         });
     }
