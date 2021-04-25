@@ -3,7 +3,6 @@ module.exports = { mongo : null, app : null,
         this.mongo = mongo;
         this.app = app;
     },
-
     obtenerOfertasPg : function(criterio,pg,funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -24,7 +23,6 @@ module.exports = { mongo : null, app : null,
             }
         });
     },
-
     insertarUsuario : function(usuario, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
         if (err) {
             funcionCallback(null);
@@ -41,13 +39,12 @@ module.exports = { mongo : null, app : null,
         }
     });
     },
-
-    eliminarComentario : function(criterio, funcionCallback) {
+    eliminarConversacion : function(criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('comentarios');
+                let collection = db.collection('conversaciones');
                 collection.remove(criterio, function(err, result) {
                     if (err) {
                         funcionCallback(null);
@@ -76,7 +73,23 @@ module.exports = { mongo : null, app : null,
             }
         });
     },
-
+    modificarMensaje : function(criterio, mensaje, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.update(criterio, {$set: mensaje}, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
     modificarUsuario : function(criterio, usuario, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -94,12 +107,12 @@ module.exports = { mongo : null, app : null,
             }
         });
     },
-    insertarComentario : function(comentario, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    insertarConversacion : function(conversacion, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
         if (err) {
             funcionCallback(null);
         } else {
-            let collection = db.collection('comentarios');
-            collection.insert(comentario, function(err, result) {
+            let collection = db.collection('conversaciones');
+            collection.insert(conversacion, function(err, result) {
                 if (err) {
                     funcionCallback(null);
                 } else {
@@ -110,17 +123,47 @@ module.exports = { mongo : null, app : null,
         }
     });
     },
-
-    obtenerComentarios : function(criterio,funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    insertarMensaje : function(mensaje, funcionCallback) { this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
         if (err) {
             funcionCallback(null);
         } else {
-            let collection = db.collection('comentarios');
-            collection.find(criterio).toArray(function(err, comentarios) {
+            let collection = db.collection('mensajes');
+            collection.insert(mensaje, function(err, result) {
                 if (err) {
                     funcionCallback(null);
                 } else {
-                    funcionCallback(comentarios);
+                    funcionCallback(result.ops[0]._id);
+                }
+                db.close();
+            });
+        }
+    });
+    },
+    obtenerMensajes : function(criterio,funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+        if (err) {
+            funcionCallback(null);
+        } else {
+            let collection = db.collection('mensajes');
+            collection.find(criterio).toArray(function(err, mensajes) {
+                if (err) {
+                    funcionCallback(null);
+                } else {
+                    funcionCallback(mensajes);
+                } db.close();
+            });
+        }
+    });
+    },
+    obtenerConversaciones : function(criterio,funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+        if (err) {
+            funcionCallback(null);
+        } else {
+            let collection = db.collection('conversaciones');
+            collection.find(criterio).toArray(function(err, conversaciones) {
+                if (err) {
+                    funcionCallback(null);
+                } else {
+                    funcionCallback(conversaciones);
                 } db.close();
             });
         }
@@ -188,7 +231,8 @@ module.exports = { mongo : null, app : null,
             });
         }
     });
-    },eliminarUsuarios : function(criterio, funcionCallback) {
+    },
+    eliminarUsuarios : function(criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);

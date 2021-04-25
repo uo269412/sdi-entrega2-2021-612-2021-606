@@ -235,6 +235,7 @@ module.exports = function(app, swig, gestorBD) {
         destacarOferta(criterio, criterioUsuarios, true, req, res);
     });
 
+
     /**
      * Esta función se encarga, a partir de los dos criterios recibidos y de si la oferta se puede destacar o no.
      * Primero esta función creará una oferta que tendrá de valor destacada el que le hemos pasado por parámetro, luego
@@ -242,6 +243,11 @@ module.exports = function(app, swig, gestorBD) {
      * gestión se realiza correctamente, se creará un nuevo saldo para el usuario que partirá del base, y dependiendo
      * de si está destacando o dejando de destacar, le bajará o aumentará el saldo en 20. Después se actualiza en la
      * base de datos y se vuelve al listado de propias.
+     * @param criterio que sirve para obtener la oferta que se corresponde con el id y así se pueda modificar
+     * @param criterioUsuarios que sirve para obtener el usuario que corresponde con el id y así se modifique
+     * @param destacar booleano que establece si se quiere destacar la oferta del controlador
+     * @param req proveniente del controlador
+     * @param res proveniente del controlador
      */
     function destacarOferta(criterio, criterioUsuarios, destacar, req, res) {
         let oferta = {
