@@ -25,7 +25,7 @@ module.exports = function(app, gestorBD) {
             } else {
                 let criterioConversaciones = {"oferta": gestorBD.mongo.ObjectID(req.params.id)}
                 gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
-                    if (conversaciones == null) {
+                    if (conversaciones == null || conversaciones.length === 0) {
                         let conversacion = {
                             interesado: res.usuario,
                             propietario: ofertas[0].vendedor,
@@ -43,9 +43,9 @@ module.exports = function(app, gestorBD) {
                             }
                         });
                     } else {
-                        insertarMensaje(conversaciones[0].id, errors, req, res);
-                        res.status(200);
-                        res.send(JSON.stringify(conversaciones[0]));
+                        console.log(conversaciones[0]);
+                        console.log(conversaciones[0]._id);
+                        insertarMensaje(gestorBD.mongo.ObjectID(conversaciones[0]._id), errors, req, res);
                     }
                 });
             }
@@ -127,7 +127,7 @@ module.exports = function(app, gestorBD) {
             } else {
                 res.status(201);
                 res.json({
-                    mensaje: "canción insertada",
+                    mensaje: "mensaje insertado",
                     _id: id
                 })
             }

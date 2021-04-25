@@ -43,31 +43,42 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Este controlador se encarga de responder a la petición GET de api/conversacion/:id, en la cual se
-     * devolverán en formato json todas las mensajes de la conversación que se pasa por parámetro :id.
+     * devolverán en formato json todas las mensajes de la conversación que se pasa por parámetro :id. Se comprobará
+     * que para ver esta conversación es uno de los dos participantes.
      * En el caso de que en uno de estos pasos haya errores, se mostrarán.
      */
     app.get("/api/conversacion/:id", function(req, res) {
         let errors = [];
         let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
-        gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
-            if (conversaciones == null) {
-                res.json({
-                    errores: errors
-                })
-            } else {
-                let criterioMensajes = {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}
-                gestorBD.obtenerMensajes(criterioMensajes, function (mensajes) {
-                    if (mensajes == null) {
+        usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, function(tienePermiso) {
+            if (tienePermiso) {
+                gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
+                    if (conversaciones == null) {
                         res.json({
                             errores: errors
                         })
                     } else {
-                        res.status(200);
-                        res.send(JSON.stringify(mensajes));
+                        let criterioMensajes = {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}
+                        gestorBD.obtenerMensajes(criterioMensajes, function (mensajes) {
+                            if (mensajes == null) {
+                                res.json({
+                                    errores: errors
+                                })
+                            } else {
+                                res.status(200);
+                                res.send(JSON.stringify(mensajes));
+                            }
+                        });
                     }
                 });
+            } else {
+                res.status(413);
+                errors.push("El usuario que está en sesión no es ni el propietario ni el interesado de la conversación");
+                res.json({
+                    errores: errors
+                })
             }
-        });
+        })
     });
 
     /**

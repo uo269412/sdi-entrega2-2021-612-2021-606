@@ -1,9 +1,14 @@
 
 module.exports = function(app, gestorBD) {
-    app.get("/api/oferta", function(req, res) {
-        let criterio = { "_id": {"$ne": res.usuario }};
+    /**
+     * Este controlador responde a la petición /apu/ofertas, y devuelve todas aquellas ofertas que no son del usuario
+     * que está en sesión
+     */
+    app.get("/api/ofertas", function(req, res) {
+        console.log(res.usuario);
+        let criterio = { "vendedor": {"$ne": res.usuario }};
         gestorBD.obtenerOfertas( criterio , function(ofertas) {
-            if (canciones == null) {
+            if (ofertas == null) {
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"

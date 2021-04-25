@@ -2,12 +2,7 @@ let express = require('express');
 let app = express();
 let rest = require('request');
 let os = require('os');
-let puerto = 3001;
 app.set('rest',rest);
-
-app.listen(puerto, function() {
-    console.log("Servidor listo "+puerto);
-});
 
 //REST
 app.use(function(req, res, next) {
@@ -91,22 +86,26 @@ routerUsuarioToken.use(function(req, res, next) {
     }
 });
 // Aplicar routerUsuarioToken
-app.use('/api/cancion', routerUsuarioToken);
+app.use('/api/conversaciones/*', routerUsuarioToken);
+app.use('/api/mensaje/*', routerUsuarioToken);
+app.use('/api/ofertas', routerUsuarioToken);
+
 
 // routerUsuarioSession
 var routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
-    console.log("routerUsuarioSession");
     if ( req.session.usuario ) {
         // dejamos correr la petición
         next();
     } else {
-        console.log("va a : "+req.session.destino);
         res.redirect("/identificarse");
     }
 });
 
 //Aplicar routerUsuarioSession
+app.use("/home",routerUsuarioSession);
+app.use("/index",routerUsuarioSession);
+app.use("/desconectarse",routerUsuarioSession);
 app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
 app.use("/cancion/comprar",routerUsuarioSession);
@@ -114,16 +113,14 @@ app.use("/compras",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
 app.use("/conversaciones/list",routerUsuarioSession);
 
-//routerUsuarioAutor
+//routerUsuarioVendedor
 
-let routerUsuarioAutor = express.Router();
-routerUsuarioAutor.use(function(req, res, next) {
-    console.log("routerUsuarioAutor");
+let routerUsuarioVendedor = express.Router();
+routerUsuarioVendedor.use(function(req, res, next) {
     let path = require('path');
     let id = path.basename(req.originalUrl);
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id) }, function (ofertas) {
-            console.log(ofertas[0]);
             if(ofertas[0].vendedor === req.session.usuario ){
                 next();
             } else {
@@ -133,17 +130,22 @@ routerUsuarioAutor.use(function(req, res, next) {
 });
 
 //Aplicar routerUsuarioAutor
-app.use("/oferta/eliminar",routerUsuarioAutor);
+app.use("/oferta/eliminar",routerUsuarioVendedor);
+app.use("/oferta/destacar",routerUsuarioVendedor);
+app.use("/oferta/nodestacar",routerUsuarioVendedor);
 
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rconversaciones.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rapiconversaciones.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rapimensajes.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rapiusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rapiconversaciones.js")(app, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rapimensajes.js")(app, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rapiusuarios.js")(app, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rapiofertas.js")(app, gestorBD); // (app, param1, param2, etc.)
 
 //LANZAR EL SERVIDOR
-https.createServer({}, app).listen(app.get('port'), function() {
-    console.log("Servidor activo");
+https.createServer({
+    key: fs.readFileSync('certificates/alice.key'),
+    cert: fs.readFileSync('certificates/alice.crt')
+}, app).listen(app.get('port'), function() {
+    console.log("My Wallapop activado en el puerto " + app.get('port'));
 });
