@@ -1,9 +1,10 @@
 
 module.exports = function(app, gestorBD) {
-    app.get("/api/oferta", function(req, res) {
-        let criterio = { "_id": {"$ne": res.usuario }};
+    app.get("/api/ofertas", function(req, res) {
+        console.log(res.usuario);
+        let criterio = { "vendedor": {"$ne": res.usuario }};
         gestorBD.obtenerOfertas( criterio , function(ofertas) {
-            if (canciones == null) {
+            if (ofertas == null) {
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
