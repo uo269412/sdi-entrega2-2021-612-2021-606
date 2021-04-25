@@ -1,0 +1,42 @@
+{% extends "../base.html" %}
+{% block titulo %} Detalles conversacion {% endblock %}
+{% block contenido_principal %}
+<div class="container">
+	<h1>Conversación</h1>
+	<div class="container2">
+		{% for mensaje in mensajes %}
+			{% if mensaje.author.email == principal.name %}
+			<div style="width: 100%;
+				background-color: white;
+				color: black;
+				vertical-align: top;
+				border-color: #d3d3d3;
+				text-align:left;
+				border-style:solid;
+				border-width:medium;padding: 10px;">
+			  <p>{{mensaje.author.name}}</p>
+			  <p>{{mensaje.text}}</p>
+			  <span class="time-right white" >{{mensaje.dateOfUpload}}</span>
+			</div>
+
+			{% else %}
+			<div style="width: 100%;
+				background-color: white;
+				color: black;
+				vertical-align: top;
+				border-color: #d3d3d3;
+				text-align:right;
+				border-style:solid;
+				border-width:medium; padding: 10px;">
+			  <p>{{mensaje.author.name}}</p>
+			  <p>{{mensaje.text}}</p>
+			  <span class="time-right white">{{mensaje.dateOfUpload}}</span>
+			</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<form class="navbar-form searchS" action="/conversaciones/agregar/ALGOAQUI">
+		<input name="searchText" type="text" class="form-control btn-text" placeholder="Añadir mensaje" style="width: 60%; margin: auto;" size="50">
+		<button class="btn btn-lg btn-primary btn-text" name="search_button" style="width: 30%; margin-left: 10px" type="submit" >Enviar</button>
+	</form>
+</div>

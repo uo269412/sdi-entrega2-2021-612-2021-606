@@ -31,7 +31,7 @@ app.use(expressSession({
 }));
 
 //VARIABLES
-app.set('port', 8082);
+app.set('port', 8081);
 var MongoClient = require('mongodb').MongoClient;
 app.set('db',"mongodb://admin:sdi@mywallapop-shard-00-00.g25pg.mongodb.net:27017,mywallapop-shard-00-01.g25pg.mongodb.net:27017,mywallapop-shard-00-02.g25pg.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-c18f3s-shard-0&authSource=admin&retryWrites=true&w=majority");
 
