@@ -124,7 +124,7 @@ routerUsuarioAutor.use(function(req, res, next) {
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id) }, function (ofertas) {
             console.log(ofertas[0]);
-            if(ofertas[0].vendedor == req.session.usuario ){
+            if(ofertas[0].vendedor === req.session.usuario ){
                 next();
             } else {
                 res.redirect("/ofertas");

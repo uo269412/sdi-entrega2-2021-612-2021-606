@@ -149,11 +149,10 @@ module.exports = function(app, swig, gestorBD) {
         let criterioUsuarios = {"email": req.session.usuario};
         console.log(req.session.usuario);
         let usuario = req.session.usuario;
-
         let oferta = {
             comprador: usuario
         }
-        gestorBD.añadirCompra(criterio, oferta, function (idCompra) {
+        gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
             if (idCompra == null) {
                 res.send(respuesta);
             } else {
@@ -197,19 +196,64 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     /**
-     * Este controlador recibe la petición GET /oferta/nodestacar/:id
+     * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método
+     * del gestor de base de datos, uno encargado de buscar el id de la oferta que se quiere destacar y otro el email
+     * del usuario que está en sesión (que es el vendedor de la oferta). Luego llama a la función destacarOferta
+     * utilizando como parámetros los dos criterios y un false indicando que se quiere no destacar la oferta.
      */
-    app.get('/oferta/nodestacar/:id', function (req, res) {
+    app.post('/oferta/nodestacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        res.redirect('/propias');
+        let criterioUsuarios = {"email": req.session.usuario};
+        destacarOferta(criterio, criterioUsuarios, false, req, res);
     });
 
     /**
-     * Este controlador recibe la petición GET /oferta/destacar/:id
+     * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método
+     * del gestor de base de datos, uno encargado de buscar el id de la oferta que se quiere destacar y otro el email
+     * del usuario que está en sesión (que es el vendedor de la oferta). Luego llama a la función destacarOferta
+     * utilizando como parámetros los dos criterios y un true indicando que se quiere destacar la oferta.
      */
-    app.get('/oferta/destacar/:id', function (req, res) {
+    app.post('/oferta/destacar/:id', function (req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        res.redirect('/propias');
+        let criterioUsuarios = {"email": req.session.usuario};
+        destacarOferta(criterio, criterioUsuarios, true, req, res);
     });
+
+    /**
+     * Esta función se encarga, a partir de los dos criterios recibidos y de si la oferta se puede destacar o no.
+     * Primero esta función creará una oferta que tendrá de valor destacada el que le hemos pasado por parámetro, luego
+     * se llamará a la base de datos que se encargará de modificar esta oferta cambiando su campo destacado. Si esta
+     * gestión se realiza correctamente, se creará un nuevo saldo para el usuario que partirá del base, y dependiendo
+     * de si está destacando o dejando de destacar, le bajará o aumentará el saldo en 20. Después se actualiza en la
+     * base de datos y se vuelve al listado de propias.
+     */
+    function destacarOferta(criterio, criterioUsuarios, destacar, req, res) {
+        let oferta = {
+            destacada: destacar
+        }
+        gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
+            if (idCompra == null) {
+                res.send(respuesta);
+            } else {
+                let nuevoSaldo = Number(req.session.saldo);
+                if (destacar) {
+                    nuevoSaldo -= 20;
+                } else {
+                    nuevoSaldo += 20;
+                }
+                req.session.saldo = nuevoSaldo;
+                let usuario = {
+                    saldo: nuevoSaldo
+                }
+                gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                    if (idCompra == null) {
+                        res.send(respuesta);
+                    } else {
+                        res.redirect("/propias");
+                    }
+                });
+            }
+        });
+    }
 
 }

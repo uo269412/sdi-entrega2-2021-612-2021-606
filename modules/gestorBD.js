@@ -59,7 +59,7 @@ module.exports = { mongo : null, app : null,
             }
         });
     },
-    añadirCompra : function(criterio, oferta, funcionCallback) {
+    modificarOferta : function(criterio, oferta, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
