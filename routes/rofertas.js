@@ -5,7 +5,9 @@ module.exports = function(app, swig, gestorBD) {
      * el fichero que muestra el formulario para añadir ofertas (add.html)
      */
     app.get('/ofertas/agregar', function (req, res) {
-        let respuesta = swig.renderFile('views/offers/add.html', {});
+        let respuesta = swig.renderFile('views/offers/add.html', {
+            saldo: req.session.saldo
+        });
         res.send(respuesta);
     });
 
@@ -46,6 +48,21 @@ module.exports = function(app, swig, gestorBD) {
      */
     app.post("/oferta", function(req, res) {
         let errors = new Array();
+        let estaDestacada = false;
+        if (req.body.estaDestacada != null) {
+            estaDestacada = true;
+            let criterioUsuarios = {"email": req.session.usuario};
+            let nuevoSaldo = Number(req.session.saldo) - 20;
+            req.session.saldo = nuevoSaldo;
+            let usuario = {
+                saldo: nuevoSaldo
+            }
+            gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                if (idCompra == null) {
+                    res.send(respuesta);
+                }
+            });
+        }
         let oferta = {
             titulo : req.body.titulo,
             descripcion : req.body.descripcion,
@@ -53,7 +70,7 @@ module.exports = function(app, swig, gestorBD) {
             precio : parseFloat(req.body.precio),
             vendedor: req.session.usuario,
             comprador: null,
-            destacada: false
+            destacada: estaDestacada
         }
         validaDatosRegistroOferta(oferta, errors, function (errors) {
             if (errors != null && errors.length > 0) {
@@ -172,7 +189,6 @@ module.exports = function(app, swig, gestorBD) {
                                 res.redirect("/compras");
                             }
                         });
-
                     }
                 });
             }
