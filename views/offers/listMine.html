@@ -24,22 +24,29 @@
 						<td>oferta ya vendida</td>
 					{% else %}
 						<td><a href='/oferta/eliminar/{{oferta._id.toString()}}'>eliminar</a></td>
+			<td>
+				{% if oferta.destacada == true %}
+				<div>
+					<form method="post" action ='/oferta/nodestacar/{{oferta._id.toString()}}'>
+						<button class="btn btn-lg btn-primary" style="margin-left: 10px;background-color: #f44336; border-color:#f44336 " name="buttonDestacar" type="submit" >Dejar de destacar</button>
+					</form>
+				</div>
+				{% elseif Number(saldo) >= 20 %}
+				<div>
+					<form method="post" action ='/oferta/destacar/{{oferta._id.toString()}}'>
+						<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonDestacar" type="submit">Destacar</button>
+					</form>
+				</div>
+				{% elseif Number(saldo) < 20 %}
+				<div>
+					<form method="post" action ='/oferta/destacar/{{oferta._id.toString()}}'>
+						<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonDestacar" type="submit" disabled>Destacar</button>
+					</form>
+				</div>
+				{% endif %}
+			</td>
 					{% endif %}
-					<td>
-						{% if oferta.destacada == true %}
-						<div>
-							<form method="post" action ='/oferta/nodestacar/{{oferta._id.toString()}}'>
-								<button class="btn btn-lg btn-primary" style="margin-left: 10px;background-color: #f44336; border-color:#f44336 " name="buttonDestacar" type="submit" >Destacada</button>
-							</form>
-						</div>
-						{% else %}
-						<div>
-							<form method="post" action ='/oferta/destacar/{{oferta._id.toString()}}'>
-								<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonDestacar" type="submit">Normal</button>
-							</form>
-						</div>
-						{% endif %}
-					</td>
+
 				</tr>
 			{% endfor %}
 			</tbody>
