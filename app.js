@@ -67,9 +67,6 @@ routerUsuarioToken.use(function(req, res, next) {
                     acceso : false,
                     error: 'Token invalido o caducado'
                 });
-                // También podríamos comprobar que intoToken.usuario existe
-                return;
-
             } else {
                 // dejamos correr la petición
                 res.usuario = infoToken.usuario;
@@ -92,7 +89,7 @@ app.use('/api/ofertas', routerUsuarioToken);
 
 
 // routerUsuarioSession
-var routerUsuarioSession = express.Router();
+let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     if ( req.session.usuario ) {
         // dejamos correr la petición
@@ -137,6 +134,7 @@ app.use("/oferta/nodestacar",routerUsuarioVendedor);
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rerrores.js")(app, swig); // (app, param1, param2, etc.)
 require("./routes/rapiconversaciones.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapimensajes.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiusuarios.js")(app, gestorBD); // (app, param1, param2, etc.)
