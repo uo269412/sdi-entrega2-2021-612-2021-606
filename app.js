@@ -23,7 +23,7 @@ let jwt = require('jsonwebtoken');
 app.set('jwt',jwt);
 
 //SESIÓN
-var expressSession = require('express-session');
+let expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
     resave: true,
@@ -32,7 +32,7 @@ app.use(expressSession({
 
 //VARIABLES
 app.set('port', 8082);
-var MongoClient = require('mongodb').MongoClient;
+let MongoClient = require('mongodb').MongoClient;
 app.set('db',"mongodb://admin:sdi@mywallapop-shard-00-00.g25pg.mongodb.net:27017,mywallapop-shard-00-01.g25pg.mongodb.net:27017,mywallapop-shard-00-02.g25pg.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-c18f3s-shard-0&authSource=admin&retryWrites=true&w=majority");
 
 
@@ -87,13 +87,14 @@ app.use('/api/conversaciones/*', routerUsuarioToken);
 app.use('/api/mensaje/*', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
 
-
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     if ( req.session.usuario ) {
-        // dejamos correr la petición
-        next();
+        if (! req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
     } else {
         res.redirect("/identificarse");
     }
@@ -105,13 +106,30 @@ app.use("/index",routerUsuarioSession);
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
-app.use("/cancion/comprar",routerUsuarioSession);
+app.use("/oferta/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
 app.use("/conversaciones/list",routerUsuarioSession);
 
-//routerUsuarioVendedor
 
+// routerUsuarioAdmin
+let routerUsuarioSessionAdmin = express.Router();
+routerUsuarioSession.use(function(req, res, next) {
+    if ( req.session.usuario ) {
+        if (req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+
+//Aplicar routerUsuarioSessionAdmin
+app.use("/usuarios/eliminar",routerUsuarioSessionAdmin);
+
+
+//routerUsuarioVendedor
 let routerUsuarioVendedor = express.Router();
 routerUsuarioVendedor.use(function(req, res, next) {
     let path = require('path');

@@ -133,6 +133,16 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
+                ofertas.sort(function (a, b) {
+                    if (a.destacada && b.destacada) {
+                        return 0;
+                    }
+                    if (a.destacada) {
+                        return 1;
+                    }
+                    return -1;
+                });
+
                 let respuesta = swig.renderFile('views/offers/listAll.html',
                     {
                         ofertas: ofertas,
