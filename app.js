@@ -23,7 +23,7 @@ let jwt = require('jsonwebtoken');
 app.set('jwt',jwt);
 
 //SESIÓN
-var expressSession = require('express-session');
+let expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
     resave: true,
@@ -31,8 +31,8 @@ app.use(expressSession({
 }));
 
 //VARIABLES
-app.set('port', 8081);
-var MongoClient = require('mongodb').MongoClient;
+app.set('port', 8082);
+let MongoClient = require('mongodb').MongoClient;
 app.set('db',"mongodb://admin:sdi@mywallapop-shard-00-00.g25pg.mongodb.net:27017,mywallapop-shard-00-01.g25pg.mongodb.net:27017,mywallapop-shard-00-02.g25pg.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-c18f3s-shard-0&authSource=admin&retryWrites=true&w=majority");
 
 
@@ -67,9 +67,6 @@ routerUsuarioToken.use(function(req, res, next) {
                     acceso : false,
                     error: 'Token invalido o caducado'
                 });
-                // También podríamos comprobar que intoToken.usuario existe
-                return;
-
             } else {
                 // dejamos correr la petición
                 res.usuario = infoToken.usuario;
@@ -90,13 +87,14 @@ app.use('/api/conversaciones/*', routerUsuarioToken);
 app.use('/api/mensaje/*', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
 
-
 // routerUsuarioSession
-var routerUsuarioSession = express.Router();
+let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     if ( req.session.usuario ) {
-        // dejamos correr la petición
-        next();
+        if (! req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
     } else {
         res.redirect("/identificarse");
     }
@@ -108,13 +106,30 @@ app.use("/index",routerUsuarioSession);
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
-app.use("/cancion/comprar",routerUsuarioSession);
+app.use("/oferta/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
 app.use("/conversaciones/list",routerUsuarioSession);
 
-//routerUsuarioVendedor
 
+// routerUsuarioAdmin
+let routerUsuarioSessionAdmin = express.Router();
+routerUsuarioSession.use(function(req, res, next) {
+    if ( req.session.usuario ) {
+        if (req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+
+//Aplicar routerUsuarioSessionAdmin
+app.use("/usuarios/eliminar",routerUsuarioSessionAdmin);
+
+
+//routerUsuarioVendedor
 let routerUsuarioVendedor = express.Router();
 routerUsuarioVendedor.use(function(req, res, next) {
     let path = require('path');
@@ -137,6 +152,7 @@ app.use("/oferta/nodestacar",routerUsuarioVendedor);
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rerrores.js")(app, swig); // (app, param1, param2, etc.)
 require("./routes/rapiconversaciones.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapimensajes.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiusuarios.js")(app, gestorBD); // (app, param1, param2, etc.)

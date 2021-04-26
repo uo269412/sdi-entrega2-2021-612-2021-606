@@ -46,7 +46,7 @@ module.exports = function(app, swig, gestorBD) {
      * a /home.html.
      */
     app.post('/usuario', function(req, res) {
-        let errors = new Array();
+        let errors = [];
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let usuario = {
@@ -59,7 +59,7 @@ module.exports = function(app, swig, gestorBD) {
         }
         let criterioUsuarios = {"email": req.body.email};
         gestorBD.obtenerUsuarios(criterioUsuarios, function(usuarios) {
-            if (!(usuarios == null || usuarios.length == 0)) {
+            if (!(usuarios == null || usuarios.length === 0)) {
                 errors.push("El usuario ya se encuentra registrado");
             }
         })
@@ -134,7 +134,8 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (ofertas == null) {
-                res.send("Error al listar ");
+                res.redirect("/error" + "?mensaje=Error al listar las ofertas propias"
+                    + "&tipoMensaje=alert-danger");
             } else {
                 let respuesta = swig.renderFile('views/offers/listMine.html',
                     {
@@ -157,7 +158,8 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = { comprador : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (ofertas == null) {
-                res.send("Error al listar ");
+                res.redirect("/error" + "?mensaje=Error al listar las ofertas compradas"
+                    + "&tipoMensaje=alert-danger");
             } else {
                 let respuesta = swig.renderFile('views/offers/listPurchased.html',
                     {
@@ -179,7 +181,8 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = {admin: false};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null) {
-                res.send("Error al listar");
+                res.redirect("/error" + "?mensaje=Error al obtener la lista de usuarios"
+                    + "&tipoMensaje=alert-danger");
             } else {
                 let respuesta = swig.renderFile('views/user/list.html',
                     {
@@ -201,14 +204,10 @@ module.exports = function(app, swig, gestorBD) {
         res.redirect("/");
     });
 
-    app.get('/error/', function (req, res) {
-        let respuesta = swig.renderFile('views/error.html', {
-            mensaje: req.mensaje,
-            tipoMensaje: req.tipoMensaje
-        });
-        res.send(respuesta)
-    });
-
+    /**
+     * Este controlador recibe la petición POST de /usuarios/eliminar, a la cual solo podrá acceder el administrador y
+     * desde la cual podrá borrar aquellos seleccionados, además de borrar sus ofertas que no se hayan vendido
+     */
     app.post('/usuarios/eliminar', function (req, res) {
         let criterio = [];
         if (typeof req.body.deleteUser === "string"){
@@ -221,9 +220,11 @@ module.exports = function(app, swig, gestorBD) {
             }
         }
         let criterioFinal = {"$or": criterio};
-        gestorBD.obtenerUsuarios(criterioFinal,function (usuarios) {
-            if (usuarios === null || usuarios.length === 0 ){
-                res.send("Error al recibir usuarios");
+      
+        gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
+            if (usuarios == null) {
+                res.redirect("/error" + "?mensaje=Error al eliminar los usuarios"
+                    + "&tipoMensaje=alert-danger");
             } else {
                 let criterioEmails = [];
                 for (let user of usuarios){
