@@ -87,13 +87,14 @@ app.use('/api/conversaciones/*', routerUsuarioToken);
 app.use('/api/mensaje/*', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
 
-
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     if ( req.session.usuario ) {
-        // dejamos correr la petición
-        next();
+        if (! req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
     } else {
         res.redirect("/identificarse");
     }
@@ -105,13 +106,30 @@ app.use("/index",routerUsuarioSession);
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
-app.use("/cancion/comprar",routerUsuarioSession);
+app.use("/oferta/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
 app.use("/conversaciones/list",routerUsuarioSession);
 
-//routerUsuarioVendedor
 
+// routerUsuarioAdmin
+let routerUsuarioSessionAdmin = express.Router();
+routerUsuarioSession.use(function(req, res, next) {
+    if ( req.session.usuario ) {
+        if (req.session.admin ) {
+            // dejamos correr la petición
+            next();
+        }
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+
+//Aplicar routerUsuarioSessionAdmin
+app.use("/usuarios/eliminar",routerUsuarioSessionAdmin);
+
+
+//routerUsuarioVendedor
 let routerUsuarioVendedor = express.Router();
 routerUsuarioVendedor.use(function(req, res, next) {
     let path = require('path');
