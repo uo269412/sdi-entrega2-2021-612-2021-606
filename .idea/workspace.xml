@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4826d4db-ced0-4eb8-9004-975298d8675d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +75,8 @@
       <workItem from="1619303726789" duration="5817000" />
       <workItem from="1619364884882" duration="3691000" />
       <workItem from="1619368925539" duration="891000" />
-      <workItem from="1619369859021" duration="5796000" />
+      <workItem from="1619369859021" duration="5928000" />
+      <workItem from="1619433590087" duration="599000" />
     </task>
     <task id="LOCAL-00001" summary="Añadidas todas las vistas y controladores para acceder a ellas">
       <created>1619231960535</created>
