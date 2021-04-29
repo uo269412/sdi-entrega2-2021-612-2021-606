@@ -103,7 +103,7 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Función que se creo para extraer código repetido del controlador que inserta mensajes. Es el encargado de
-     * insertar el mensaje según el criterio en la base de datos
+     * insertar el mensaje según el criterio en la base de datos.
      * @param id de la conversación que utilizará el mensaje
      * @param errors que luego se mostrarán si hay algún error
      * @param req proveniente del controlador
