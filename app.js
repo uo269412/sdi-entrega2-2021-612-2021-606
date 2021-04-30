@@ -84,6 +84,7 @@ routerUsuarioToken.use(function(req, res, next) {
 });
 // Aplicar routerUsuarioToken
 app.use('/api/conversaciones/*', routerUsuarioToken);
+app.use('/api/conversacion/*', routerUsuarioToken);
 app.use('/api/mensaje/*', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
 
