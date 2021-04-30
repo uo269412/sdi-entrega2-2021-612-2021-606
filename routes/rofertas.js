@@ -118,7 +118,7 @@ module.exports = function(app, swig, gestorBD) {
             pg = 1;
         }
         gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
-            if (ofertas == null) {
+            if (ofertas == null || ofertas.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al listar las ofertas (listar todas" +
                     "las ofertas)" + "&tipoMensaje=alert-danger");
             } else {

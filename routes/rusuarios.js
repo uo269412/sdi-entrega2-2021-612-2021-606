@@ -133,7 +133,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/propias", function(req, res) {
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
-            if (ofertas == null) {
+            if (ofertas == null || ofertas.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al listar las ofertas propias"
                     + "&tipoMensaje=alert-danger");
             } else {
@@ -157,7 +157,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/compras", function(req, res) {
         let criterio = { comprador : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
-            if (ofertas == null) {
+            if (ofertas == null || ofertas.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al listar las ofertas compradas"
                     + "&tipoMensaje=alert-danger");
             } else {
@@ -180,7 +180,7 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/usuarios", function(req, res) {
         let criterio = {admin: false};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null) {
+            if (usuarios == null || usuarios.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al obtener la lista de usuarios"
                     + "&tipoMensaje=alert-danger");
             } else {
@@ -221,7 +221,7 @@ module.exports = function(app, swig, gestorBD) {
         }
         let criterioFinal = {"$or": criterio};
         gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
-            if (usuarios == null) {
+            if (usuarios == null || usuarios.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al eliminar los usuarios"
                     + "&tipoMensaje=alert-danger");
             } else {
