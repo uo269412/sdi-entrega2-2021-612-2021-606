@@ -1,14 +1,27 @@
 {% extends "baseSesion.html" %}
 {% block titulo %} Iniciar Sesión {% endblock %}
 {% block contenido_principal %}
+<div class="container">
+	{% if (errores != null) %}
+	{% if (errores.length >0) %}
+	<div class="alert alert-danger">
+		<ul>
+			{% for error in errores %}
+			<li>{{error}}</li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	{% endif %}
 	<main class="form-signin">
+		<h2>Accede a la aplicación con un usuario ya identificado</h2>
 		<form method="post" action="/identificarse" >
 			<img class="mb-4" src="static/logo-wallapop.png" alt="" width="300"
 				height="127">
 			<h1 class="h3 mb-3 fw-normal" >Iniciar
 				Sesión</h1>
 			<label for="inputEmail" >Email:</label>
-			<input type="email" id="inputEmail" class="form-control" name="email">
+			<input type="text" id="inputEmail" class="form-control" name="email">
 			<label for="inputPassword">Contraseña:</label>
 			<div class="col-sm-100">
 				<input type="password" id="inputPassword" class="form-control"
@@ -19,3 +32,4 @@
 			<p class="mt-5 mb-3 text-muted">&copy; 2021–2022</p>
 		</form>
 	</main>
+</div>

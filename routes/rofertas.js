@@ -30,6 +30,9 @@ module.exports = function(app, swig, gestorBD) {
         }
         try {
             Number(oferta.precio);
+            if (Number(oferta.precio) <= 0) {
+                errors.push("El precio no puede ser negativo o cero");
+            }
         } catch (Exception) {
             errors.push("El precio no es un número")
         }
@@ -64,32 +67,6 @@ module.exports = function(app, swig, gestorBD) {
                             + "&tipoMensaje=alert-danger");
                     }
                 });
-                let oferta = {
-                    titulo: req.body.titulo,
-                    descripcion: req.body.descripcion,
-                    fechaSubida: new Date(),
-                    precio: parseFloat(req.body.precio),
-                    vendedor: req.session.usuario,
-                    comprador: null,
-                    destacada: estaDestacada
-                }
-                validaDatosRegistroOferta(oferta, errors, function (errors) {
-                    if (errors != null && errors.length > 0) {
-                        let respuesta = swig.renderFile("views/offers/add.html", {
-                            errores: errors
-                        })
-                        res.send(respuesta);
-                    } else {
-                        gestorBD.insertarOferta(oferta, function (id) {
-                            if (id == null) {
-                                res.redirect("/error" + "?mensaje=Error al insertar la oferta (añadir oferta)"
-                                    + "&tipoMensaje=alert-danger");
-                            } else {
-                                res.redirect("/home");
-                            }
-                        });
-                    }
-                });
             } else {
                 errors.push("No tienes dinero suficiente para poder destacar la oferta");
                 let respuesta = swig.renderFile("views/offers/add.html", {
@@ -98,6 +75,32 @@ module.exports = function(app, swig, gestorBD) {
                 res.send(respuesta);
             }
         }
+        let oferta = {
+            titulo: req.body.titulo,
+            descripcion: req.body.descripcion,
+            fechaSubida: new Date(),
+            precio: parseFloat(req.body.precio),
+            vendedor: req.session.usuario,
+            comprador: null,
+            destacada: estaDestacada
+        }
+        validaDatosRegistroOferta(oferta, errors, function (errors) {
+            if (errors != null && errors.length > 0) {
+                let respuesta = swig.renderFile("views/offers/add.html", {
+                    errores: errors
+                })
+                res.send(respuesta);
+            } else {
+                gestorBD.insertarOferta(oferta, function (id) {
+                    if (id == null) {
+                        res.redirect("/error" + "?mensaje=Error al insertar la oferta (añadir oferta)"
+                            + "&tipoMensaje=alert-danger");
+                    } else {
+                        res.redirect("/home");
+                    }
+                });
+            }
+        });
     });
 
     /**
@@ -137,10 +140,10 @@ module.exports = function(app, swig, gestorBD) {
                         if (b.destacada) {
                             return 0;
                         } else {
-                            return -1;
+                            return 1;
                         }
                     } else {
-                        return 1;
+                            return -1;
                     }
                 });
 
