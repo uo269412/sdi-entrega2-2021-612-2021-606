@@ -47,6 +47,7 @@ module.exports = function(app, gestorBD) {
                                     })
                                 } else {
                                     insertarMensaje(id, errors, req, res);
+                                    res.status(201);
                                 }
                             });
                         }
@@ -54,6 +55,7 @@ module.exports = function(app, gestorBD) {
                         console.log(conversaciones[0]);
                         console.log(conversaciones[0]._id);
                         insertarMensaje(gestorBD.mongo.ObjectID(conversaciones[0]._id), errors, req, res);
+                        res.status(201);
                     }
                 });
             }

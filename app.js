@@ -185,6 +185,14 @@ routerUsuarioNoesVendedorNiAdmin.use(function(req, res, next) {
 //Aplicar routerUsuarioNoesVendedorNiAdmin
 app.use("/oferta/comprar",routerUsuarioNoesVendedorNiAdmin);
 
+//Captura de errores
+app.use(function(err,req,res,next ){
+    console.log("Error producido: "+err);
+    if(!res.headersSent){
+        res.send("Recurso no disponible");
+    }
+});
+
 
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)

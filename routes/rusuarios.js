@@ -59,27 +59,33 @@ module.exports = function(app, swig, gestorBD) {
         }
         let criterioUsuarios = {"email": req.body.email};
         gestorBD.obtenerUsuarios(criterioUsuarios, function(usuarios) {
+            console.log(usuarios);
             if (!(usuarios == null || usuarios.length === 0)) {
                 errors.push("El usuario ya se encuentra registrado");
-            }
-        })
-        validaDatosRegistroUsuario(usuario, errors, req.body.password, req.body.passwordConfirm, function (errors) {
-            if (errors != null && errors.length > 0) {
                 let respuesta = swig.renderFile("views/signup.html", {
                     errores: errors
                 })
                 res.send(respuesta);
             } else {
-                gestorBD.insertarUsuario(usuario, function(id) {
-                    if (id == null){
-                        res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                validaDatosRegistroUsuario(usuario, errors, req.body.password, req.body.passwordConfirm, function (errors) {
+                    if (errors != null && errors.length > 0) {
+                        let respuesta = swig.renderFile("views/signup.html", {
+                            errores: errors
+                        })
+                        res.send(respuesta);
                     } else {
-                        req.session.usuario = usuario.email;
-                        req.session.saldo = usuario.saldo;
-                        req.session.admin = usuario.admin;
-                        res.redirect("/home");
+                        gestorBD.insertarUsuario(usuario, function(id) {
+                            if (id == null){
+                                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                            } else {
+                                req.session.usuario = usuario.email;
+                                req.session.saldo = usuario.saldo;
+                                req.session.admin = usuario.admin;
+                                res.redirect("/home");
+                            }
+                        });
                     }
-                });
+                })
             }
         })
     });
@@ -90,30 +96,63 @@ module.exports = function(app, swig, gestorBD) {
      * en sesión el email, el saldo y si es un administrador o no.
      */
     app.post("/identificarse", function(req, res) {
+        var errors = [];
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {
             email : req.body.email,
             password : seguro
         }
-        gestorBD.obtenerUsuarios(criterio, function(usuarios) {
-            if (usuarios == null || usuarios.length === 0) {
-                req.session.usuario = null;
-                res.redirect("/identificarse" +
-                    "?mensaje=Email o password incorrecto"+
-                    "&tipoMensaje=alert-danger ");
+        validaDatosIdentificarse(req.body.email, req.body.password, errors, function (errors) {
+            if (errors != null && errors.length > 0) {
+                let respuesta = swig.renderFile("views/login.html", {
+                    errores: errors
+                })
+                res.send(respuesta);
             } else {
-                req.session.usuario = usuarios[0].email;
-                req.session.saldo = usuarios[0].saldo;
-                req.session.admin = usuarios[0].admin;
-                if (usuarios[0].admin === true){
-                    res.redirect("/usuarios");
-                }
-                else
-                    res.redirect("/home");
+                gestorBD.obtenerUsuarios(criterio, function(usuarios) {
+                    if (usuarios == null || usuarios.length === 0) {
+                        let errors = [];
+                        errors.push("El usuario no existe en la base de datos o la contraseña es incorrecta");
+                        let respuesta = swig.renderFile("views/login.html", {
+                            errores: errors
+                        })
+                        res.send(respuesta);
+                    } else {
+                        req.session.usuario = usuarios[0].email;
+                        req.session.saldo = usuarios[0].saldo;
+                        req.session.admin = usuarios[0].admin;
+                        if (usuarios[0].admin === true){
+                            res.redirect("/usuarios");
+                        }
+                        else
+                            res.redirect("/home");
+                    }
+                });
             }
-        });
+        })
     });
+
+    /**
+     * Esta función es la que se encarga de validar que los campos del formulario de identificación contengan datos correctos.
+     * En caso contrario, se irán almacenando en un array una lista con los errores para que el usuario pueda ver
+     * aquellos campos que se encuentran incorrectos.
+     */
+    function validaDatosIdentificarse(email, password, errors, funcionCallback) {
+        if (email === null || typeof email === 'undefined' ||
+            email === "") {
+            errors.push("Se tiene que añadir un email")
+        }
+        if (password === null || typeof password === 'undefined' ||
+            password === "") {
+            errors.push("Se tiene que añadir una contraseña")
+        }
+        if (errors.length <= 0) {
+            funcionCallback(null)
+        } else {
+            funcionCallback(errors)
+        }
+    }
 
     /**
      * Este controlador recibe la petición GET /identificarse que renderiza la vista login.html para que el usuario
@@ -201,7 +240,7 @@ module.exports = function(app, swig, gestorBD) {
         req.session.usuario = null;
         req.session.saldo = null;
         req.session.admin = null;
-        res.redirect("/");
+        res.redirect("/identificarse");
     });
 
     /**

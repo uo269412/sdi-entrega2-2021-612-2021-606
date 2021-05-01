@@ -12,6 +12,7 @@ module.exports = function(app, gestorBD) {
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
             if (conversaciones == null || conversaciones.length === 0) {
                 errors.push("El usuario no tiene ninguna conversación como interesado")
+                res.status(500);
                 res.json({
                     errores: errors
                 })
@@ -33,6 +34,7 @@ module.exports = function(app, gestorBD) {
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
             if (conversaciones == null || conversaciones.length === 0) {
                 errors.push("El usuario no tiene ninguna conversación como propietario")
+                res.status(500);
                 res.json({
                     errores: errors
                 })
@@ -56,14 +58,16 @@ module.exports = function(app, gestorBD) {
                 gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
                     if (conversaciones == null || conversaciones.length === 0) {
                         errors.push("No se ha obtenido la conversación")
+                        res.status(500);
                         res.json({
                             errores: errors
                         })
                     } else {
-                        let criterioMensajes = {$and:[{ "leido": false },  {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}, { "autor": {"$ne": res.usuario } }]}
-                        gestorBD.obtenerNumeroMensajes(criterioMensajes, function (mensajes) {
+                        let criterioNumeroMensajes = {$and:[{ "leido": false },  {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}, { "autor": {"$ne": res.usuario } }]}
+                        gestorBD.obtenerNumeroMensajes(criterioNumeroMensajes, function (mensajes) {
                             if (mensajes == null || mensajes.length === 0) {
                                 errors.push("La conversación no tiene ningún mensaje")
+                                res.status(500);
                                 res.json({
                                     errores: errors
                                 })
@@ -98,6 +102,7 @@ module.exports = function(app, gestorBD) {
                 gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
                     if (conversaciones == null || conversaciones.length === 0) {
                         errors.push("No se ha obtenido la conversación")
+                        res.status(500);
                         res.json({
                             errores: errors
                         })
@@ -106,6 +111,7 @@ module.exports = function(app, gestorBD) {
                         gestorBD.obtenerMensajes(criterioMensajes, function (mensajes) {
                             if (mensajes == null || mensajes.length === 0) {
                                 errors.push("La conversación no tiene ningún mensaje")
+                                res.status(500);
                                 res.json({
                                     errores: errors
                                 })
