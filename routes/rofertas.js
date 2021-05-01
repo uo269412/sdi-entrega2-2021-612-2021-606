@@ -108,10 +108,9 @@ module.exports = function(app, swig, gestorBD) {
      * ofertas que se correspondan con el nombre.
      */
     app.get("/ofertas", function(req, res) {
-        let criterio = {};
+        let criterio = {"vendedor": {"$ne": req.session.usuario }};
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': ".*" + req.query.busqueda + ".*"}};
-            console.log(req.query.busqueda);
+            criterio = {'titulo': {'$regex': ".*" + req.query.busqueda + ".*"}, "vendedor": {"$ne": req.session.usuario }};
         }
 
         let pg = parseInt(req.query.pg);
@@ -119,7 +118,7 @@ module.exports = function(app, swig, gestorBD) {
             pg = 1;
         }
         gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
-            if (ofertas == null) {
+            if (ofertas == null || ofertas.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al listar las ofertas (listar todas" +
                     "las ofertas)" + "&tipoMensaje=alert-danger");
             } else {
@@ -133,14 +132,16 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                ofertas.sort(function (a, b) {
-                    if (a.destacada && b.destacada) {
-                        return 0;
-                    }
+                ofertas = ofertas.sort(function (a, b) {
                     if (a.destacada) {
+                        if (b.destacada) {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    } else {
                         return 1;
                     }
-                    return -1;
                 });
 
                 let respuesta = swig.renderFile('views/offers/listAll.html',

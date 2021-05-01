@@ -10,7 +10,8 @@ module.exports = function(app, gestorBD) {
         let errors = [];
         let criterio = {"interesado": res.usuario}
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
-            if (conversaciones == null) {
+            if (conversaciones == null || conversaciones.length === 0) {
+                errors.push("El usuario no tiene ninguna conversación como interesado")
                 res.json({
                     errores: errors
                 })
@@ -30,7 +31,8 @@ module.exports = function(app, gestorBD) {
         let errors = [];
         let criterio = {"propietario": res.usuario}
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
-            if (conversaciones == null) {
+            if (conversaciones == null || conversaciones.length === 0) {
+                errors.push("El usuario no tiene ninguna conversación como propietario")
                 res.json({
                     errores: errors
                 })
@@ -42,25 +44,26 @@ module.exports = function(app, gestorBD) {
     });
 
     /**
-     * Este controlador se encarga de responder a la petición GET de api/conversacion/:id, en la cual se
-     * devolverán en formato json todas las mensajes de la conversación que se pasa por parámetro :id. Se comprobará
-     * que para ver esta conversación es uno de los dos participantes.
-     * En el caso de que en uno de estos pasos haya errores, se mostrarán.
+     * Este controlador se encarga de responder a la petición GET de api/conversacion/noleidos/:id, en la cual se
+     * devolverán en formato json el contador de todos los mensajes no leídos de la conversación del usuario (los
+     * cuales no han sido enviados por él).
      */
-    app.get("/api/conversacion/:id", function(req, res) {
+    app.get("/api/conversacion/noleidos/:id", function(req, res) {
         let errors = [];
         let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
-        usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, function(tienePermiso) {
+        usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), res.usuario, function(tienePermiso) {
             if (tienePermiso) {
                 gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
-                    if (conversaciones == null) {
+                    if (conversaciones == null || conversaciones.length === 0) {
+                        errors.push("No se ha obtenido la conversación")
                         res.json({
                             errores: errors
                         })
                     } else {
-                        let criterioMensajes = {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}
-                        gestorBD.obtenerMensajes(criterioMensajes, function (mensajes) {
-                            if (mensajes == null) {
+                        let criterioMensajes = {$and:[{ "leido": false },  {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}, { "autor": {"$ne": res.usuario } }]}
+                        gestorBD.obtenerNumeroMensajes(criterioMensajes, function (mensajes) {
+                            if (mensajes == null || mensajes.length === 0) {
+                                errors.push("La conversación no tiene ningún mensaje")
                                 res.json({
                                     errores: errors
                                 })
@@ -82,6 +85,49 @@ module.exports = function(app, gestorBD) {
     });
 
     /**
+     * Este controlador se encarga de responder a la petición GET de api/conversacion/:id, en la cual se
+     * devolverán en formato json todas las mensajes de la conversación que se pasa por parámetro :id. Se comprobará
+     * que para ver esta conversación es uno de los dos participantes.
+     * En el caso de que en uno de estos pasos haya errores, se mostrarán.
+     */
+    app.get("/api/conversacion/:id", function(req, res) {
+        let errors = [];
+        let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
+        usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), res.usuario, function(tienePermiso) {
+            if (tienePermiso) {
+                gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
+                    if (conversaciones == null || conversaciones.length === 0) {
+                        errors.push("No se ha obtenido la conversación")
+                        res.json({
+                            errores: errors
+                        })
+                    } else {
+                        let criterioMensajes = {"conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)}
+                        gestorBD.obtenerMensajes(criterioMensajes, function (mensajes) {
+                            if (mensajes == null || mensajes.length === 0) {
+                                errors.push("La conversación no tiene ningún mensaje")
+                                res.json({
+                                    errores: errors
+                                })
+                            } else {
+                                res.status(200);
+                                res.send(JSON.stringify(mensajes));
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.status(413);
+                errors.push("El usuario que está en sesión no es ni el propietario ni el interesado de la conversación");
+                res.json({
+                    errores: errors
+                })
+            }
+        })
+    });
+
+
+    /**
      * Este controlador se encarga de responder a la petición DELETE de api/conversacion/:id, en la cual se
      * borrará aquella conversación que tenga como id el especificado por parámetro. Luego se volverán a mostrar
      * todas las conversaciones menos esa. Para que el usuario pueda borrarla, se comprobará que ese usuario en sesión
@@ -94,16 +140,27 @@ module.exports = function(app, gestorBD) {
         let errors = [];
         usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, function(tienePermiso) {
             if (tienePermiso) {
-                gestorBD.eliminarConversacion(criterio,function(conversaciones){
-                    if ( conversaciones == null ){
+                let criterioMensajes  = { conversacion : gestorBD.mongo.ObjectID(req.params.id)}
+                gestorBD.eliminarMensajes(criterioMensajes,function(mensajes){
+                    if ( mensajes == null || mensajes.length === 0){
                         res.status(500);
-                        errors.push("Se ha producido un error borrando la conversación");
+                        errors.push("Se ha producido un error borrando los mensajes de la conversación");
                         res.json({
                             errores: errors
                         })
                     } else {
-                        res.status(200);
-                        res.send( JSON.stringify(conversaciones) );
+                        gestorBD.eliminarConversacion(criterio,function(conversaciones){
+                            if ( conversaciones == null || conversaciones.length === 0){
+                                res.status(500);
+                                errors.push("Se ha producido un error borrando la conversación");
+                                res.json({
+                                    errores: errors
+                                })
+                            } else {
+                                res.status(200);
+                                res.send( JSON.stringify(conversaciones) );
+                            }
+                        });
                     }
                 });
             } else {
@@ -126,9 +183,9 @@ module.exports = function(app, gestorBD) {
     function usuarioInteresadoPropietario(conversacionID, usuarioSesion, funcionCallback) {
         let criterio = { "_id" : conversacionID}
         gestorBD.obtenerConversaciones(criterio,function(conversaciones){
-            if ( conversaciones == null ){
+            if ( conversaciones == null || conversaciones.length === 0){
             } else {
-                if ((conversaciones[0]).propietario === (usuarioSesion) || (conversaciones[0]).interesado === (usuarioSesion)) {
+                if ((conversaciones[0]).propietario === usuarioSesion|| (conversaciones[0]).interesado === usuarioSesion) {
                     funcionCallback(true)
                 } else {
                     funcionCallback(false)

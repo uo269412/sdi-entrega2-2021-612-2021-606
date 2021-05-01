@@ -6,7 +6,7 @@ module.exports = function(app, gestorBD) {
      */
     app.get("/api/ofertas", function(req, res) {
         console.log(res.usuario);
-        let criterio = { "vendedor": {"$ne": res.usuario }};
+        let criterio = {$and:[{ "vendedor": {"$ne": res.usuario } }, {"comprador" : null}]}
         gestorBD.obtenerOfertas( criterio , function(ofertas) {
             if (ofertas == null) {
                 res.status(500);

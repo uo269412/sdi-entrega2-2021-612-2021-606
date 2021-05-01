@@ -39,6 +39,23 @@ module.exports = { mongo : null, app : null,
         }
     });
     },
+    eliminarMensajes : function(criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.deleteMany(criterio, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
     eliminarConversacion : function(criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -145,6 +162,21 @@ module.exports = { mongo : null, app : null,
         } else {
             let collection = db.collection('mensajes');
             collection.find(criterio).toArray(function(err, mensajes) {
+                if (err) {
+                    funcionCallback(null);
+                } else {
+                    funcionCallback(mensajes);
+                } db.close();
+            });
+        }
+    });
+    },
+    obtenerNumeroMensajes : function(criterio,funcionCallback){ this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+        if (err) {
+            funcionCallback(null);
+        } else {
+            let collection = db.collection('mensajes');
+            collection.count(criterio, function(err, mensajes) {
                 if (err) {
                     funcionCallback(null);
                 } else {

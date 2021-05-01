@@ -84,6 +84,7 @@ routerUsuarioToken.use(function(req, res, next) {
 });
 // Aplicar routerUsuarioToken
 app.use('/api/conversaciones/*', routerUsuarioToken);
+app.use('/api/conversacion/*', routerUsuarioToken);
 app.use('/api/mensaje/*', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
 
@@ -91,7 +92,7 @@ app.use('/api/ofertas', routerUsuarioToken);
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     if ( req.session.usuario ) {
-        if (! req.session.admin ) {
+        if (!req.session.admin) {
             // dejamos correr la petición
             next();
         }
@@ -101,10 +102,8 @@ routerUsuarioSession.use(function(req, res, next) {
 });
 
 //Aplicar routerUsuarioSession
-app.use("/home",routerUsuarioSession);
-app.use("/index",routerUsuarioSession);
-app.use("/desconectarse",routerUsuarioSession);
 app.use("/ofertas/agregar",routerUsuarioSession);
+app.use("/oferta",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
 app.use("/oferta/comprar",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
@@ -112,9 +111,9 @@ app.use("/ofertas",routerUsuarioSession);
 app.use("/conversaciones/list",routerUsuarioSession);
 
 
-// routerUsuarioAdmin
+// routerUsuarioSessionAdmin
 let routerUsuarioSessionAdmin = express.Router();
-routerUsuarioSession.use(function(req, res, next) {
+routerUsuarioSessionAdmin.use(function(req, res, next) {
     if ( req.session.usuario ) {
         if (req.session.admin ) {
             // dejamos correr la petición
@@ -127,7 +126,23 @@ routerUsuarioSession.use(function(req, res, next) {
 
 //Aplicar routerUsuarioSessionAdmin
 app.use("/usuarios/eliminar",routerUsuarioSessionAdmin);
+app.use("/usuarios",routerUsuarioSessionAdmin);
 
+// routerUsuarioAdminBase
+let routerUsuarioSessionBase = express.Router();
+routerUsuarioSessionBase.use(function(req, res, next) {
+    if ( req.session.usuario ) {
+            // dejamos correr la petición
+            next();
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+
+//Aplicar routerUsuarioSessionDesc
+app.use("/home",routerUsuarioSessionBase);
+app.use("/index",routerUsuarioSessionBase);
+app.use("/desconectarse",routerUsuarioSessionBase);
 
 //routerUsuarioVendedor
 let routerUsuarioVendedor = express.Router();
@@ -148,6 +163,28 @@ routerUsuarioVendedor.use(function(req, res, next) {
 app.use("/oferta/eliminar",routerUsuarioVendedor);
 app.use("/oferta/destacar",routerUsuarioVendedor);
 app.use("/oferta/nodestacar",routerUsuarioVendedor);
+
+//routerUsuarioNoesVendedorNiAdmin
+let routerUsuarioNoesVendedorNiAdmin = express.Router();
+routerUsuarioNoesVendedorNiAdmin.use(function(req, res, next) {
+    let path = require('path');
+    let id = path.basename(req.originalUrl);
+    gestorBD.obtenerOfertas(
+        {_id: mongo.ObjectID(id) }, function (ofertas) {
+            if(ofertas[0].vendedor !== req.session.usuario ){
+                if (!req.session.admin) {
+                    next();
+                }
+
+            } else {
+                res.redirect("/ofertas");
+            }
+        })
+});
+
+//Aplicar routerUsuarioNoesVendedorNiAdmin
+app.use("/oferta/comprar",routerUsuarioNoesVendedorNiAdmin);
+
 
 //RUTAS
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)

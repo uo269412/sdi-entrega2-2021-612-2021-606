@@ -31,17 +31,25 @@ module.exports = function(app, gestorBD) {
                             propietario: ofertas[0].vendedor,
                             oferta: gestorBD.mongo.ObjectID(req.params.id)
                         }
-                        gestorBD.insertarConversacion(conversacion, function (id) {
-                            if (id == null) {
-                                res.status(500);
-                                errors.push("se ha producido un error")
-                                res.json({
-                                    errores: errors
-                                })
-                            } else {
-                                insertarMensaje(id, errors, req, res);
-                            }
-                        });
+                        if (res.usuario === ofertas[0].vendedor) {
+                            res.status(500);
+                            errors.push("El propietario de la oferta no puede comenzar la conversación");
+                            res.json({
+                                errores: errors
+                            })
+                        } else {
+                            gestorBD.insertarConversacion(conversacion, function (id) {
+                                if (id == null) {
+                                    res.status(500);
+                                    errors.push("se ha producido un error")
+                                    res.json({
+                                        errores: errors
+                                    })
+                                } else {
+                                    insertarMensaje(id, errors, req, res);
+                                }
+                            });
+                        }
                     } else {
                         console.log(conversaciones[0]);
                         console.log(conversaciones[0]._id);
@@ -54,7 +62,7 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Este controlador se encarga de responder a la petición PUT de api/mensaje/:id, la cual se encargará de actualizar
-     * el mensaje a leído que se corresponda con el parámetro :id. Se comprobará que el usuario es propietario antes
+     * el mensaje a leído que se corresponda con el parámetro :id. Se comprobará que el usuario es el interesado antes
      * de realizar esta operación.
      */
     app.put("/api/mensaje/:id", function(req, res) {
@@ -65,15 +73,15 @@ module.exports = function(app, gestorBD) {
         let usuarioSesion = res.usuario;
         let errors = [];
         gestorBD.obtenerMensajes(criterio,function(mensajes){
-            if (mensajes == null ){
+            if (mensajes == null || mensajes.length === 0){
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
                 })
             } else {
                 res.status(200);
-                usuarioPropietario(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, function(isPropietario) {
-                    if (isPropietario) {
+                usuarioInteresadoPropietarioYNoEsAutor(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, mensajes[0], function(sePermiteLeer) {
+                    if (sePermiteLeer) {
                         gestorBD.modificarMensaje(criterio, mensaje, function(result) {
                             if (result == null) {
                                 res.status(500);
@@ -103,7 +111,7 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Función que se creo para extraer código repetido del controlador que inserta mensajes. Es el encargado de
-     * insertar el mensaje según el criterio en la base de datos
+     * insertar el mensaje según el criterio en la base de datos.
      * @param id de la conversación que utilizará el mensaje
      * @param errors que luego se mostrarán si hay algún error
      * @param req proveniente del controlador
@@ -127,7 +135,8 @@ module.exports = function(app, gestorBD) {
             } else {
                 res.status(201);
                 res.json({
-                    mensaje: "mensaje insertado",
+                    texto: mensaje.texto,
+                    autor: mensaje.autor,
                     _id: id
                 })
             }
@@ -136,18 +145,24 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Función que emplea el controlador de la petición PUT de api/mensaje/:id. Se encarga de comprobar que
-     * el usuario en sesión sea el propietario
+     * el usuario en sesión sea el propietario o el interesado de la conversación, además de que no es el autor del mensaje,
+     * para así marcarlo como léido
      * @param conversacionID que se utilizará como criterio para obtener la conversación de la base de datos
      * @param usuarioSesion que es el usuario que se encuentra en sesión
+     * @param mensaje que se analizará para saber si el usuario es autor o no
      * @param funcionCallback devolverá falso o verdadero dependiendo de si el usuario cumple esa condición o no
      */
-    function usuarioPropietario(conversacionID, usuarioSesion, funcionCallback) {
+    function usuarioInteresadoPropietarioYNoEsAutor(conversacionID, usuarioSesion, mensaje, funcionCallback) {
         let criterio = { "_id" : conversacionID}
         gestorBD.obtenerConversaciones(criterio,function(conversaciones){
-            if ( conversaciones == null ){
+            if ( conversaciones == null || conversaciones.length === 0){
             } else {
-                if ((conversaciones[0]).propietario === (usuarioSesion)) {
-                    funcionCallback(true)
+                if ((conversaciones[0]).propietario === usuarioSesion|| (conversaciones[0]).interesado === usuarioSesion) {
+                    if (mensaje.autor !== usuarioSesion) {
+                        funcionCallback(true)
+                    } else {
+                        funcionCallback(false);
+                    }
                 } else {
                     funcionCallback(false)
                 }
