@@ -7,9 +7,44 @@
 				<button class="btn btn-lg btn-primary btn-text" name= "search_button" style="width: 30%; margin-left: 10px" type="submit" >Buscar</button>
 		</form>
 		<div class="container">
-			<h2>Ofertas</h2>
-			<p>Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
 			<div class="table-responsive">
+				<h2>Ofertas Destacadas</h2>
+				<p>Las ofertas que recomendamos:</p>
+				<table class="table white">
+					<thead>
+					<tr>
+						<th >Titulo</th>
+						<th >Description</th>
+						<th >Precio</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for oferta in ofertasDestacadas %}
+					<td >{{oferta.titulo}}</td>
+					<td >{{oferta.descripcion}}</td>
+					<td >{{oferta.precio}}€</td>
+					<td>
+						{% if oferta.comprador == null %}
+						{% if Number(saldo) >= Number(oferta.precio) %}
+						<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+							<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar</button>
+						</form>
+						{% else %}
+						<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
+							<button title="No tienes saldo suficiente para comprar esta oferta" class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" disabled>Comprar</button>
+						</form>
+						{% endif %}
+						{% else %}
+						<button class="btn btn-lg btn-primary" style="margin-left: 10px"  >Comprado</button>
+						{% endif %}
+					</td>
+					</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				<h2>Ofertas</h2>
+				<p>Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
 				<table class="table white">
 					<thead>
 						<tr>

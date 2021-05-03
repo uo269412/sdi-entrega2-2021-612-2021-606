@@ -202,6 +202,7 @@ require("./routes/rapiconversaciones.js")(app, gestorBD); // (app, param1, param
 require("./routes/rapimensajes.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiusuarios.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiofertas.js")(app, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rinitdb.js")(app, gestorBD); // (app, param1, param2, etc.)
 
 //LANZAR EL SERVIDOR
 https.createServer({
