@@ -259,13 +259,33 @@ module.exports = function(app, swig, gestorBD) {
             }
         }
         let criterioFinal = {"$or": criterio};
+      
         gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
             if (usuarios == null || usuarios.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al eliminar los usuarios"
                     + "&tipoMensaje=alert-danger");
             } else {
-                res.redirect('/usuarios');
+                let criterioEmails = [];
+                for (let user of usuarios){
+                    criterioEmails.push({"vendedor" : user.email, "comprador": null });
+                }
+                gestorBD.eliminarOfertas({"$or": criterioEmails},function (ofertas) {
+                    if (ofertas === null || ofertas.length === 0 ){
+                        res.send("Error al eliminar ofertas");
+                    } else {
+                        gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
+                            if (usuarios == null) {
+                                res.send("No se ha encontrado el/los usuarios a borrar");
+                            } else {
+                                res.redirect('/usuarios');
+                            }
+                        });
+                    }
+                });
             }
         });
+
+
+
     });
 };

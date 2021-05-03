@@ -1,0 +1,76 @@
+<div id="widget-canciones" >
+    <h2>Ofertas</h2>
+    <p>Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
+        <div class="table-responsive">
+            <table class="table white">
+                <thead>
+                <tr>
+                    <th >Titulo</th>
+                    <th >Description</th>
+                    <th >Precio</th>
+                    <th>Vendedor</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="tablaCuerpo">
+
+                </tbody>
+            </table>
+        </div>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=ofertas");
+    var ofertas;
+    function cargarOfertas(){
+        $.ajax({
+            url: URLbase + "/ofertas",
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                ofertas = respuesta;
+                actualizarTabla(ofertas);
+            },
+            error : function (error){
+                $( "#contenedor-principal" ).load("widget-login.html");
+            }
+        });
+    }
+
+    function actualizarTabla(ofertasMostrar){
+        var tabla = $("#tablaCuerpo");
+        tabla.empty(); // Vaciar la tabla
+        for (i = 0; i < ofertasMostrar.length; i++) {
+            tabla.append(
+                "<tr id="+ofertasMostrar[i]._id+">"+
+                "<td>"+ofertasMostrar[i].titulo+"</td>" +
+                "<td>"+ofertasMostrar[i].descripcion+"</td>" +
+                "<td>"+ofertasMostrar[i].precio+"</td>" +
+                "<td>"+ofertasMostrar[i].vendedor+"</td>"+
+                "<td><button id=\"boton-mensaje\" name="+"'"+ ofertasMostrar[i]._id +"'"+" class=\"w-100 btn btn-lg btn-primary\" style=\"margin-top: 10px\">Enviar Mensaje</button></td>"+
+                "</tr>");
+        }
+    }
+
+    $("#boton-mensaje").click(function(){
+        $.ajax({
+            url: URLbase + "/conversacion/" + "OBTENER NOMBRE DEL BOTON PARA PASAR A LA API",
+            type: "POST",
+            data: {},
+            dataType: 'json',
+            success: function (respuesta){
+                token = respuesta.token;
+                $("#contenedor-principal").load("widget-conversacion.html");
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-login").prepend("<div id='alert' class='alert alert-danger'> Usuario no encontrado </div>");
+            }
+        });
+    })
+
+    cargarOfertas();
+
+</script>
