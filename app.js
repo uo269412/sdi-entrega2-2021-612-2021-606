@@ -104,12 +104,9 @@ routerUsuarioSession.use(function(req, res, next) {
 //Aplicar routerUsuarioSession
 app.use("/ofertas/agregar",routerUsuarioSession);
 app.use("/oferta",routerUsuarioSession);
-app.use("/propias",routerUsuarioSession);
-app.use("/oferta/comprar",routerUsuarioSession);
-app.use("/compras",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
-app.use("/conversaciones/list",routerUsuarioSession);
-
+app.use("/propias",routerUsuarioSession);
+app.use("/compras",routerUsuarioSession);
 
 // routerUsuarioSessionAdmin
 let routerUsuarioSessionAdmin = express.Router();
@@ -128,7 +125,7 @@ routerUsuarioSessionAdmin.use(function(req, res, next) {
 app.use("/usuarios/eliminar",routerUsuarioSessionAdmin);
 app.use("/usuarios",routerUsuarioSessionAdmin);
 
-// routerUsuarioAdminBase
+// routerUsuarioSessionBase
 let routerUsuarioSessionBase = express.Router();
 routerUsuarioSessionBase.use(function(req, res, next) {
     if ( req.session.usuario ) {
@@ -139,7 +136,7 @@ routerUsuarioSessionBase.use(function(req, res, next) {
     }
 });
 
-//Aplicar routerUsuarioSessionDesc
+//Aplicar routerUsuarioSessionBase
 app.use("/home",routerUsuarioSessionBase);
 app.use("/index",routerUsuarioSessionBase);
 app.use("/desconectarse",routerUsuarioSessionBase);
@@ -171,14 +168,14 @@ routerUsuarioNoesVendedorNiAdmin.use(function(req, res, next) {
     let id = path.basename(req.originalUrl);
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id) }, function (ofertas) {
-            if(ofertas[0].vendedor !== req.session.usuario ){
+            if(ofertas[0].vendedor !== req.session.usuario ) {
                 if (!req.session.admin) {
                     next();
-                }
-
-            } else {
+                } else {
                 res.redirect("/ofertas");
+                }
             }
+            res.redirect("/ofertas");
         })
 });
 

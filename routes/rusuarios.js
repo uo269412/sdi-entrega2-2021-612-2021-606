@@ -59,7 +59,6 @@ module.exports = function(app, swig, gestorBD) {
         }
         let criterioUsuarios = {"email": req.body.email};
         gestorBD.obtenerUsuarios(criterioUsuarios, function(usuarios) {
-            console.log(usuarios);
             if (!(usuarios == null || usuarios.length === 0)) {
                 errors.push("El usuario ya se encuentra registrado");
                 let respuesta = swig.renderFile("views/signup.html", {
