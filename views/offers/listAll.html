@@ -28,11 +28,11 @@
 						{% if oferta.comprador == null %}
 						{% if Number(saldo) >= Number(oferta.precio) %}
 						<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
-							<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" >Comprar destacada</button>
+							<button class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprarDestacada" type="submit" >Comprar destacada</button>
 						</form>
 						{% else %}
 						<form method="get" action ="/oferta/comprar/{{oferta._id.toString()}}" }>
-							<button title="No tienes saldo suficiente para comprar esta oferta" class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprar" type="submit" disabled>Destacada ya comprado</button>
+							<button title="No tienes saldo suficiente para comprar esta oferta" class="btn btn-lg btn-primary" style="margin-left: 10px" name="buttonComprarDestacada" type="submit" disabled>Destacada ya comprado</button>
 						</form>
 						{% endif %}
 						{% else %}

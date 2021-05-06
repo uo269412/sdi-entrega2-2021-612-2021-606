@@ -114,7 +114,7 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
         let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': "." + req.query.busqueda + "."}, "vendedor": {"$ne": req.session.usuario }};
+            criterio = {'titulo': {'$regex': req.query.busqueda }, "vendedor": {"$ne": req.session.usuario }};
         }
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
@@ -163,7 +163,7 @@ module.exports = function(app, swig, gestorBD) {
      * se volverá a las ofertas propias.
      */
     app.get("/oferta/eliminar/:id", function(req, res) {
-        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let criterio = {$and:[{"_id": gestorBD.mongo.ObjectID(req.params.id)}, {"comprador" : null}]}
         gestorBD.eliminarOferta(criterio, function (oferta) {
             if (oferta == null) {
                 res.redirect("/error" + "?mensaje=Error al eliminar la oferta seleccionada (eliminar oferta)" +
@@ -186,7 +186,6 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/oferta/comprar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
-        console.log(req.session.usuario);
         let usuario = req.session.usuario;
         let oferta = {
             comprador: usuario
