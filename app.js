@@ -141,6 +141,20 @@ app.use("/home",routerUsuarioSessionBase);
 app.use("/index",routerUsuarioSessionBase);
 app.use("/desconectarse",routerUsuarioSessionBase);
 
+// routerNoHayUsuario
+let routerNoHayUsuario = express.Router();
+routerNoHayUsuario.use(function(req, res, next) {
+    if ( req.session.usuario ) {
+        res.redirect("/home");
+    } else {
+        next();
+    }
+});
+
+//Aplicar routerUsuarioSessionBase
+app.use("/identificarse",routerNoHayUsuario);
+app.use("/registrarse",routerNoHayUsuario);
+
 //routerUsuarioVendedor
 let routerUsuarioVendedor = express.Router();
 routerUsuarioVendedor.use(function(req, res, next) {
@@ -192,14 +206,14 @@ app.use(function(err,req,res,next ){
 
 
 //RUTAS
-require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rerrores.js")(app, swig); // (app, param1, param2, etc.)
 require("./routes/rapiconversaciones.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapimensajes.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiusuarios.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapiofertas.js")(app, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rinitdb.js")(app, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rofertas.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rhome.js")(app, swig); // (app, param1, param2, etc.)
 
 //LANZAR EL SERVIDOR
 https.createServer({

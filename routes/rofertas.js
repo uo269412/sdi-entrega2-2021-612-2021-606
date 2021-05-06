@@ -224,22 +224,7 @@ module.exports = function(app, swig, gestorBD) {
             }
         });
     });
-    /**
-     * Este controlador recibe la petición GET /home, que manda al home.html datos del email y saldo del usuario en
-     * sesión
-     */
-    app.get('/home', function (req, res) {
-        let respuesta = swig.renderFile('views/home.html', {email: req.session.usuario, saldo: req.session.saldo});
-        res.send(respuesta);
-    });
 
-    /**
-     * Este controlador recibe la petición GET /, que renderiza la vista index.html
-     */
-    app.get('/', function (req, res) {
-        let respuesta = swig.renderFile('views/index.html', {});
-        res.send(respuesta);
-    });
 
     /**
      * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método
