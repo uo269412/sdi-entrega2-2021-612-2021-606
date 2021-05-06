@@ -111,17 +111,25 @@ module.exports = function(app, swig, gestorBD) {
      * ofertas que se correspondan con el nombre.
      */
     app.get("/ofertas", function(req, res) {
-        let criterio = {"vendedor": {"$ne": req.session.usuario }};
+        let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
+        let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': ".*" + req.query.busqueda + ".*"}, "vendedor": {"$ne": req.session.usuario }};
+            criterio = {'titulo': {'$regex': req.query.busqueda }, "vendedor": {"$ne": req.session.usuario }};
         }
-
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
             pg = 1;
         }
+        let ofertasDestacadasView = [];
+        gestorBD.obtenerOfertas(criterioDestacadas, function (ofertasDestacadas) {
+            if (ofertasDestacadas == null ) {
+                res.redirect("/error" + "?mensaje=Error al listar las ofertas destacadas (listar destacadas)" + "&tipoMensaje=alert-danger");
+            } else {
+                ofertasDestacadasView = ofertasDestacadas;
+            }
+        });
         gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
-            if (ofertas == null || ofertas.length === 0) {
+            if (ofertas == null) {
                 res.redirect("/error" + "?mensaje=Error al listar las ofertas (listar todas" +
                     "las ofertas)" + "&tipoMensaje=alert-danger");
             } else {
@@ -135,21 +143,10 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                ofertas = ofertas.sort(function (a, b) {
-                    if (a.destacada) {
-                        if (b.destacada) {
-                            return 0;
-                        } else {
-                            return 1;
-                        }
-                    } else {
-                            return -1;
-                    }
-                });
-
                 let respuesta = swig.renderFile('views/offers/listAll.html',
                     {
                         ofertas: ofertas,
+                        ofertasDestacadas: ofertasDestacadasView,
                         saldo: req.session.saldo,
                         paginas: paginas,
                         actual: pg,
@@ -160,14 +157,13 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-
     /**
      * Este controlador recibe la petición GET /oferta/eliminar/:id, mediante la cual se selecciona la oferta en la
      * base de datos que se corresponda con el id, para luego ser eliminada. Si la operación se realiza con éxito,
      * se volverá a las ofertas propias.
      */
     app.get("/oferta/eliminar/:id", function(req, res) {
-        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let criterio = {$and:[{"_id": gestorBD.mongo.ObjectID(req.params.id)}, {"comprador" : null}]}
         gestorBD.eliminarOferta(criterio, function (oferta) {
             if (oferta == null) {
                 res.redirect("/error" + "?mensaje=Error al eliminar la oferta seleccionada (eliminar oferta)" +
@@ -190,7 +186,6 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/oferta/comprar/:id", function(req, res) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
-        console.log(req.session.usuario);
         let usuario = req.session.usuario;
         let oferta = {
             comprador: usuario

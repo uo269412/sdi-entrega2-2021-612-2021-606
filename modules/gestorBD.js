@@ -9,7 +9,7 @@ module.exports = { mongo : null, app : null,
                 funcionCallback(null);
             } else {
                 let collection = db.collection('ofertas');
-                collection.count(function(err, count){
+                collection.find(criterio).count(function(err, count){
                     collection.find(criterio).skip( (pg-1)*5 ).limit( 5 )
                         .toArray(function(err, ofertas) {
                             if (err) {
@@ -62,6 +62,55 @@ module.exports = { mongo : null, app : null,
                 funcionCallback(null);
             } else {
                 let collection = db.collection('conversaciones');
+                collection.remove(criterio, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    eliminarMensaje : function(criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.remove(criterio, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    eliminarTodo : function(funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                db.dropDatabase(function(err, result) {
+                    if (err) {{}
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                });
+            }
+        });
+    },
+    eliminarUsuario : function(criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('usaurios');
                 collection.remove(criterio, function(err, result) {
                     if (err) {
                         funcionCallback(null);
