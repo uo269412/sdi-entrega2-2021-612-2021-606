@@ -114,48 +114,48 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
         let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': ".*" + req.query.busqueda + ".*"}, "vendedor": {"$ne": req.session.usuario }};
+            criterio = {'titulo': {'$regex': "." + req.query.busqueda + "."}, "vendedor": {"$ne": req.session.usuario }};
         }
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
             pg = 1;
         }
+        let ofertasDestacadasView = [];
         gestorBD.obtenerOfertas(criterioDestacadas, function (ofertasDestacadas) {
             if (ofertasDestacadas == null ) {
-                res.redirect("/error" + "?mensaje=Error al listar las ofertas destacadas (listar todas" +
+                res.redirect("/error" + "?mensaje=Error al listar las ofertas destacadas (listar destacadas)" + "&tipoMensaje=alert-danger");
+            } else {
+                ofertasDestacadasView = ofertasDestacadas;
+            }
+        });
+        gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
+            if (ofertas == null) {
+                res.redirect("/error" + "?mensaje=Error al listar las ofertas (listar todas" +
                     "las ofertas)" + "&tipoMensaje=alert-danger");
             } else {
-                gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
-                    if (ofertas == null || ofertas.length === 0) {
-                        res.redirect("/error" + "?mensaje=Error al listar las ofertas (listar todas" +
-                            "las ofertas)" + "&tipoMensaje=alert-danger");
-                    } else {
-                        let ultimaPg = total / 5;
-                        if (total % 5 > 0) { // Sobran decimales
-                            ultimaPg = ultimaPg + 1;
-                        }
-                        let paginas = []; // paginas mostrar
-                        for (let i = pg - 2; i <= pg + 2; i++) {
-                            if (i > 0 && i <= ultimaPg) {
-                                paginas.push(i);
-                            }
-                        }
-                        let respuesta = swig.renderFile('views/offers/listAll.html',
-                            {
-                                ofertas: ofertas,
-                                ofertasDestacadas: ofertasDestacadas,
-                                saldo: req.session.saldo,
-                                paginas: paginas,
-                                actual: pg,
-                                email: req.session.usuario
-                            });
-                        res.send(respuesta);
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
+                    ultimaPg = ultimaPg + 1;
+                }
+                let paginas = []; // paginas mostrar
+                for (let i = pg - 2; i <= pg + 2; i++) {
+                    if (i > 0 && i <= ultimaPg) {
+                        paginas.push(i);
                     }
-                });
+                }
+                let respuesta = swig.renderFile('views/offers/listAll.html',
+                    {
+                        ofertas: ofertas,
+                        ofertasDestacadas: ofertasDestacadasView,
+                        saldo: req.session.saldo,
+                        paginas: paginas,
+                        actual: pg,
+                        email: req.session.usuario
+                    });
+                res.send(respuesta);
             }
         });
     });
-
 
     /**
      * Este controlador recibe la petición GET /oferta/eliminar/:id, mediante la cual se selecciona la oferta en la

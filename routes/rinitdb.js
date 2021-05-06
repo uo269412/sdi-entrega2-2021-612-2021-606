@@ -4,28 +4,32 @@ module.exports = function(app, gestorBD) {
      * Luego creará usuarios que son obligatorios para los tests.
      */
     app.get("/resetDatabase", function(req, res) {
-        gestorBD.eliminarTodo(function(eliminado) {
+        gestorBD.eliminarTodo(function (eliminado) {
             if (eliminado == null) {
                 res.status(500);
             } else {
-                let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
-                    .update("admin").digest('hex');
-                let usuario = {
-                    email : "admin@email.com",
-                    name: "Admin",
-                    lastName: "Admin",
-                    saldo: parseFloat("100"),
-                    password : seguro,
-                    admin: true
-                }
-                gestorBD.insertarUsuario(usuario, function(id) {
-                    if (id == null){
-                        res.status(500);
-                    } else {
-                        res.status(200);
-                    }
-                });
+                insertarAdmin(res);
             }
         });
     });
+
+    function insertarAdmin(res) {
+        let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
+            .update("admin").digest('hex');
+        let usuario = {
+            email: "admin@email.com",
+            name: "Admin",
+            lastName: "Admin",
+            saldo: parseFloat("100"),
+            password: seguro,
+            admin: true
+        }
+        gestorBD.insertarUsuario(usuario, function (id) {
+            if (id == null) {
+                res.status(500);
+            } else {
+                res.redirect("/");
+            }
+        });
+    }
 };
