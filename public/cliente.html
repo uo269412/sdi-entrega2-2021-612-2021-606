@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+    <script src="/js/cookie.js"></script>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -51,15 +52,27 @@
 </div>
 <script>
     let token;
-    let URLbase = "https://localhost:8081/api";
+    let URLbase = "https://localhost:8082/api";
 
     $( "#contenedor-principal" ).load( "widget-login.html");
 
-    let url = new URL(window.location.href);
-    let w = url.searchParams.get("w");
+    if ( Cookies.get('token') != null ) {
+        token = Cookies.get('token');
 
-    if ( w === "ofertas"){
-        $( "#contenedor-principal" ).load("widget-ofertas.html");
+        let url = new URL(window.location.href);
+        let w = url.searchParams.get("w");
+        console.log(w);
+        if (w === "ofertas") {
+            $("#contenedor-principal").load("widget-ofertas.html");
+        }
+
+        if (w === "conversacion") {
+            $("#contenedor-principal").load("widget-conversacion.html");
+        }
+
+        if (w === "conversaciones") {
+            $("#contenedor-principal").load("widget-conversaciones.html");
+        }
     }
 </script>
 </div>

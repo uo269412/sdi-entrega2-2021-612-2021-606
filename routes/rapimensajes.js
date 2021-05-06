@@ -23,7 +23,8 @@ module.exports = function(app, gestorBD) {
                     error: "se ha producido un error"
                 })
             } else {
-                let criterioConversaciones = {"oferta": gestorBD.mongo.ObjectID(req.params.id)}
+                // let criterioConversaciones = {"oferta": gestorBD.mongo.ObjectID(req.params.id)}
+                let criterioConversaciones = {$and:[{"oferta": gestorBD.mongo.ObjectID(req.params.id)}, {"interesado" : res.usuario}]}
                 gestorBD.obtenerConversaciones(criterioConversaciones, function (conversaciones) {
                     if (conversaciones == null || conversaciones.length === 0) {
                         let conversacion = {
@@ -48,6 +49,7 @@ module.exports = function(app, gestorBD) {
                                 } else {
                                     insertarMensaje(id, errors, req, res);
                                     res.status(201);
+
                                 }
                             });
                         }
@@ -56,6 +58,7 @@ module.exports = function(app, gestorBD) {
                         console.log(conversaciones[0]._id);
                         insertarMensaje(gestorBD.mongo.ObjectID(conversaciones[0]._id), errors, req, res);
                         res.status(201);
+
                     }
                 });
             }
@@ -139,7 +142,8 @@ module.exports = function(app, gestorBD) {
                 res.json({
                     texto: mensaje.texto,
                     autor: mensaje.autor,
-                    _id: id
+                    _id: id,
+                    conversacion: mensaje.conversacion
                 })
             }
         });

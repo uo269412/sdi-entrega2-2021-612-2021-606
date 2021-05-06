@@ -1,0 +1,93 @@
+<main id='widget-conversacion' class="container">
+    <h1>Conversación</h1>
+    <div class="container2">
+        <div id="propietario" style="width: 100%;
+				background-color: white;
+				color: black;
+				vertical-align: top;
+				border-color: #d3d3d3;
+				text-align:left;
+				border-style:solid;
+				border-width:medium;
+				padding: 10px;">
+        </div>
+
+        <div id="interesado" style="width: 100%;
+				background-color: white;
+				color: black;
+				vertical-align: top;
+				border-color: #d3d3d3;
+				text-align:right;
+				border-style:solid;
+				border-width:medium;
+				padding: 10px;">
+        </div>
+    </div>
+
+        <input id="elMensaje" name="searchText" type="text" class="form-control btn-text" placeholder="Añadir mensaje" style="width: 60%; margin: auto;" size="50">
+        <button id="elBoton" class="btn btn-lg btn-primary btn-text" name="search_button" style="width: 30%; margin-left: 10px" type="submit" >Enviar</button>
+</main>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=conversacion");
+    var mensajes;
+    var id_conversacion;
+    console.log(id_conversacion);
+    console.log(token);
+    function cargarMensajes(){
+        $.ajax({
+            url: URLbase + "/conversacion/" + id_conversacion,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                mensajes = respuesta;
+                actualizarMensajes(mensajes);
+            },
+            error : function (error){
+                $("#alert").remove();
+                $("#widget-conversacion").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    }
+
+    function actualizarMensajes(mensajes){
+        console.log("llegue");
+        for (i = 0; i < mensajes.length; i++) {
+           let mensaje = mensajes.get(i);
+           let fecha = mensaje.fecha.split("T")[0] +" "+ mensaje.fecha.split("T")[1].split(".")[0];
+           if (mensaje.autor !== req.session.usuario){
+               $("propietario").append("<p>"+mensaje.autor+"</p>"+
+                   "<p>"+mensaje.texto+"</p>"+
+                   '<span class="time-right white">'+fecha+"</span>");
+           }else{
+               $("interesado").append("<p>"+mensaje.autor+"</p>"+
+               "<p>"+mensaje.texto+"</p>"+
+               '<span class="time-right white">'+fecha+"</span>");
+           }
+        }
+    }
+
+    $("#elBoton").click(function(event){
+        $.ajax({
+            url: URLbase + "/mensajes/" + $(event.target).name,
+            type: "POST",
+            data: {
+                texto: $("#elMensaje").text()
+            },
+            dataType: 'json',
+            success: function (respuesta){
+                token = respuesta.token;
+                $("#contenedor-principal").load("widget-conversacion.html");
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-conversacion").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    })
+
+    cargarMensajes();
+
+</script>
