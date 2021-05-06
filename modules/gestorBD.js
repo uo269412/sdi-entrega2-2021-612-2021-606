@@ -9,7 +9,7 @@ module.exports = { mongo : null, app : null,
                 funcionCallback(null);
             } else {
                 let collection = db.collection('ofertas');
-                collection.count(function(err, count){
+                collection.find(criterio).count(function(err, count){
                     collection.find(criterio).skip( (pg-1)*5 ).limit( 5 )
                         .toArray(function(err, ofertas) {
                             if (err) {
