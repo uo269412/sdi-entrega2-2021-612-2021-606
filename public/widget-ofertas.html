@@ -1,4 +1,4 @@
-<div id="widget-canciones" >
+<div id="widget-ofertas" >
     <h2>Ofertas</h2>
     <p>Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
         <div class="table-responsive">
@@ -6,10 +6,10 @@
                 <thead>
                 <tr>
                     <th >Titulo</th>
-                    <th >Description</th>
+                    <th >Descripción</th>
                     <th >Precio</th>
                     <th>Vendedor</th>
-                    <th></th>
+                    <th><input id='texto'></th>
                 </tr>
                 </thead>
                 <tbody id="tablaCuerpo">
@@ -44,32 +44,39 @@
         tabla.empty(); // Vaciar la tabla
         for (i = 0; i < ofertasMostrar.length; i++) {
             tabla.append(
-                "<tr id="+ofertasMostrar[i]._id+">"+
+                "<tr>"+
                 "<td>"+ofertasMostrar[i].titulo+"</td>" +
                 "<td>"+ofertasMostrar[i].descripcion+"</td>" +
                 "<td>"+ofertasMostrar[i].precio+"</td>" +
                 "<td>"+ofertasMostrar[i].vendedor+"</td>"+
-                "<td><button id=\"boton-mensaje\" name="+"'"+ ofertasMostrar[i]._id +"'"+" class=\"w-100 btn btn-lg btn-primary\" style=\"margin-top: 10px\">Enviar Mensaje</button></td>"+
+                "<td>" +
+                "<button onclick=enviar('"+ofertasMostrar[i]._id+"') class='btn btn-lg btn-primary' style='margin-left: 10px;'>Enviar Mensaje</button>"+
+                "</td>"+
                 "</tr>");
         }
     }
 
-    $("#boton-mensaje").click(function(){
+    function enviar(oferta){
         $.ajax({
-            url: URLbase + "/conversacion/" + "OBTENER NOMBRE DEL BOTON PARA PASAR A LA API",
+            url: URLbase + "/mensaje/" + oferta,
             type: "POST",
-            data: {},
+            data: {
+                texto: $("#texto").val()
+            },
             dataType: 'json',
+            headers: { "token": token },
             success: function (respuesta){
                 token = respuesta.token;
+                Cookies.set('token', respuesta.token);
+                id_conversacion = respuesta.conversacion;
                 $("#contenedor-principal").load("widget-conversacion.html");
             },
             error: function (error){
                 $("#alert").remove();
-                $("#widget-login").prepend("<div id='alert' class='alert alert-danger'> Usuario no encontrado </div>");
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
             }
         });
-    })
+    };
 
     cargarOfertas();
 
