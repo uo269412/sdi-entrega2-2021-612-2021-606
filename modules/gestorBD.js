@@ -10,7 +10,7 @@ module.exports = { mongo : null, app : null,
             } else {
                 let collection = db.collection('ofertas');
                 collection.find(criterio).count(function(err, count){
-                    collection.find(criterio).skip( (pg-1)*5 ).limit( 5 )
+                    collection.find(criterio).sort({"comprador" : 1}).skip( (pg-1)*5 ).limit( 5 )
                         .toArray(function(err, ofertas) {
                             if (err) {
                                 funcionCallback(null);
@@ -110,7 +110,7 @@ module.exports = { mongo : null, app : null,
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('usaurios');
+                let collection = db.collection('usuarios');
                 collection.remove(criterio, function(err, result) {
                     if (err) {
                         funcionCallback(null);
@@ -287,7 +287,7 @@ module.exports = { mongo : null, app : null,
             funcionCallback(null);
         } else {
             let collection = db.collection('ofertas');
-            collection.find(criterio).toArray(function(err, ofertas) {
+            collection.find(criterio).sort({"comprador" : 1}).toArray(function(err, ofertas) {
                 if (err) {
                     funcionCallback(null);
                 } else {
