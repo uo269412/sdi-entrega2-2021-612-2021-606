@@ -107,6 +107,7 @@ app.use("/oferta",routerUsuarioSession);
 app.use("/ofertas",routerUsuarioSession);
 app.use("/propias",routerUsuarioSession);
 app.use("/compras",routerUsuarioSession);
+app.use("/oferta/comprar",routerUsuarioSession);
 
 // routerUsuarioSessionAdmin
 let routerUsuarioSessionAdmin = express.Router();
@@ -174,27 +175,6 @@ routerUsuarioVendedor.use(function(req, res, next) {
 app.use("/oferta/eliminar",routerUsuarioVendedor);
 app.use("/oferta/destacar",routerUsuarioVendedor);
 app.use("/oferta/nodestacar",routerUsuarioVendedor);
-
-//routerUsuarioNoesVendedorNiAdmin
-let routerUsuarioNoesVendedorNiAdmin = express.Router();
-routerUsuarioNoesVendedorNiAdmin.use(function(req, res, next) {
-    let path = require('path');
-    let id = path.basename(req.originalUrl);
-    gestorBD.obtenerOfertas(
-        {_id: mongo.ObjectID(id) }, function (ofertas) {
-            if(ofertas[0].vendedor !== req.session.usuario ) {
-                if (!req.session.admin) {
-                    next();
-                } else {
-                res.redirect("/ofertas");
-                }
-            }
-            res.redirect("/ofertas");
-        })
-});
-
-//Aplicar routerUsuarioNoesVendedorNiAdmin
-app.use("/oferta/comprar",routerUsuarioNoesVendedorNiAdmin);
 
 //Captura de errores
 app.use(function(err,req,res,next ){
