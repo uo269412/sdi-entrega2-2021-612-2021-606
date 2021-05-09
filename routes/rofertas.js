@@ -113,8 +113,9 @@ module.exports = function(app, swig, gestorBD) {
     app.get("/ofertas", function(req, res) {
         let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
         let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
+        req.session.busqueda = req.query.busqueda;
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': req.query.busqueda }, "vendedor": {"$ne": req.session.usuario }};
+            criterio = {'titulo': {'$regex': ".*" +  req.query.busqueda + ".*", "$options": "i"}, "vendedor": {"$ne": req.session.usuario }};
         }
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
@@ -137,6 +138,9 @@ module.exports = function(app, swig, gestorBD) {
                 if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
+                if (pg < 1 || pg > ultimaPg) {
+                    res.redirect("/error" + "?mensaje=Página no válida" + "&tipoMensaje=alert-danger");
+                }
                 let paginas = []; // paginas mostrar
                 for (let i = pg - 2; i <= pg + 2; i++) {
                     if (i > 0 && i <= ultimaPg) {
@@ -150,7 +154,8 @@ module.exports = function(app, swig, gestorBD) {
                         saldo: req.session.saldo,
                         paginas: paginas,
                         actual: pg,
-                        email: req.session.usuario
+                        email: req.session.usuario,
+                        busqueda: req.session.busqueda
                     });
                 res.send(respuesta);
             }
