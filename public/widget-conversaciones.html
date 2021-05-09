@@ -5,28 +5,28 @@
         <table class="table white">
             <thead>
             <tr>
-                <th >Titulo</th>
-                <th >Email</th>
-                <th ></th>
-                <th ></th>
-                <th ></th>
+                <th>Titulo</th>
+                <th>Email</th>
+                <th></th>
+                <th></th>
+                <th>Mensajes no leidos</th>
+                <th></th>
             </tr>
             </thead>
-            <tbody id="conversaciones">
+            <tbody id="conversacionesTabla">
             </tbody>
         </table>
     </div>
 </div>
 
-
-
 <script>
-
     window.history.pushState("", "", "/cliente.html?w=conversaciones");
+
     var conversaciones;
+
     function cargarConversaciones(){
         $.ajax({
-            url: URLbase + "/conversaciones",
+            url: URLbase + "/conversaciones/interesado",
             type: "GET",
             data: { },
             dataType: 'json',
@@ -36,31 +36,41 @@
                 actualizarTabla(conversaciones);
             },
             error : function (error){
-                $( "#contenedor-principal" ).load("widget-login.html");
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> No se han encontrado conversaciones </div>");
             }
         });
     }
 
     function actualizarTabla(conver){
-        var tabla = $("#conversaciones");
-        tabla.empty(); // Vaciar la tabla
-        for (i = 0; i < conver.length; i++) {
-            tabla.append(
-                "<td>"+conver.oferta.title+"</td>"+
-                "<td>"+conver.propietario+"</td>"+
-                "<td><button id='acceder' name="+'conver.id'+">"+"Acceder</button></td>"+
-                "<td><button id='eliminar' name="+'conver.id'+">"+"Eliminar</button></td></tr>");
+        $("#conversacionesTabla").empty();// Vaciar la tabla
+        for (var i = 0; i < conver.length; i++) {
+            $("#conversacionesTabla").append(
+                "<tr>"+"<td id='"+i+"_titulo'>"+"</td>"+
+                "<td >"+conver[i].propietario+"</td>"+
+                "<td><button id='acceder' onclick=abrir('"+conver[i]._id+"')>"+"Acceder</button></td>"+
+                "<td><button id='eliminar' onclick=remove('"+conver[i]._id+"')>"+"Eliminar</button></td>"+
+                "<td id='"+i+"'>"+"</td>"+"</tr>");
+            noLeidos(conver[i]._id,i);
+            addTitulo(conver[i].oferta,i);
         }
     }
 
-    $("#acceder").click(function(event){
+    function abrir(id){
         $.ajax({
-            url: URLbase + "/conversacion/" + event.target.name,
+            url: URLbase + "/conversacion/" + id,
             type: "GET",
             data: {},
             dataType: 'json',
+            headers: { "token": token },
             success: function (respuesta){
-                Cookies.set('token', respuesta.token);
+                id_conversacion = id;
+                console.log(respuesta)
+                for (let i = 0; i < conversaciones.length; i++){
+                    if (conversaciones[i]._id === id){
+                        id_oferta = conversaciones[i].oferta;
+                    }
+                }
                 $("#contenedor-principal").load("widget-conversacion.html");
             },
             error: function (error){
@@ -68,17 +78,16 @@
                 $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
             }
         });
-    })
+    }
 
-    $("#eliminar").click(function(event){
+    function remove(_id){
         $.ajax({
-            url: URLbase + "/conversacion/" + event.target.name,
+            url: URLbase + "/conversacion/" + _id,
             type: "DELETE",
             data: {},
             dataType: 'json',
+            headers: { "token": token },
             success: function (respuesta){
-                token = respuesta.token;
-                console.log($(event.target).name);
                 $("#contenedor-principal").load("widget-conversaciones.html");
             },
             error: function (error){
@@ -86,7 +95,41 @@
                 $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al eliminar la conversacion </div>");
             }
         });
-    })
+    }
+
+    function noLeidos(id,i){
+        $.ajax({
+            url: URLbase + "/conversacion/noleidos/" + id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                $('#' + i).append(respuesta);
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener no leidos de la conversacion</div>");
+            }
+        });
+    }
+
+    function addTitulo(id,i){
+        $.ajax({
+            url: URLbase + "/oferta/" + id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                $('#' + i +'_titulo').append(respuesta.titulo);
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener no leidos de la conversacion</div>");
+            }
+        });
+    }
 
     cargarConversaciones();
 

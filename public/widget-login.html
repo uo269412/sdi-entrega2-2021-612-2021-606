@@ -24,6 +24,7 @@
             dataType: 'json',
             success: function (respuesta){
                 token = respuesta.token;
+                usuario = $("#email").val();
                 $("#contenedor-principal").load("widget-ofertas.html");
             },
             error: function (error){

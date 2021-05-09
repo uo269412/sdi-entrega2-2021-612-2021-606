@@ -57,8 +57,6 @@ module.exports = function(app, gestorBD) {
                             });
                         }
                     } else {
-                        console.log(conversaciones[0]);
-                        console.log(conversaciones[0]._id);
                         insertarMensaje(gestorBD.mongo.ObjectID(conversaciones[0]._id), errors, req, res);
                         res.status(201);
 
@@ -88,7 +86,7 @@ module.exports = function(app, gestorBD) {
                 })
             } else {
                 res.status(200);
-                usuarioInteresadoPropietarioYNoEsAutor(gestorBD.mongo.ObjectID(req.params.id), usuarioSesion, mensajes[0], function(sePermiteLeer) {
+                usuarioInteresadoPropietarioYNoEsAutor(gestorBD.mongo.ObjectID(mensajes[0].conversacion), usuarioSesion, mensajes[0], function(sePermiteLeer) {
                     if (sePermiteLeer) {
                         gestorBD.modificarMensaje(criterio, mensaje, function(result) {
                             if (result == null) {
@@ -164,9 +162,11 @@ module.exports = function(app, gestorBD) {
     function usuarioInteresadoPropietarioYNoEsAutor(conversacionID, usuarioSesion, mensaje, funcionCallback) {
         let criterio = { "_id" : conversacionID}
         gestorBD.obtenerConversaciones(criterio,function(conversaciones){
-            if ( conversaciones == null || conversaciones.length === 0){
+            if ( conversaciones === null || conversaciones.length === 0){
+                console.log( conversaciones === null)
+                console.log(conversaciones.length)
             } else {
-                if ((conversaciones[0]).propietario === usuarioSesion|| (conversaciones[0]).interesado === usuarioSesion) {
+                if ((conversaciones[0]).propietario === usuarioSesion || (conversaciones[0]).interesado === usuarioSesion) {
                     if (mensaje.autor !== usuarioSesion) {
                         funcionCallback(true)
                     } else {

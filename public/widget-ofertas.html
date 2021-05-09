@@ -66,10 +66,8 @@
             dataType: 'json',
             headers: { "token": token },
             success: function (respuesta){
-                token = respuesta.token;
-                Cookies.set('token', respuesta.token);
                 id_conversacion = respuesta.conversacion;
-                $("#contenedor-principal").load("widget-conversacion.html");
+                id_oferta = oferta;
             },
             error: function (error){
                 $("#alert").remove();

@@ -96,7 +96,6 @@ module.exports = function(app, gestorBD) {
      */
     app.get("/api/conversacion/:id", function(req, res) {
         let errors = [];
-        console.log("hola");
         let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), res.usuario, function(tienePermiso) {
             if (tienePermiso) {
@@ -130,7 +129,6 @@ module.exports = function(app, gestorBD) {
                     errores: errors
                 })
             }
-            console.log(errors);
         })
     });
 
