@@ -140,24 +140,25 @@ module.exports = function(app, swig, gestorBD) {
                 }
                 if (pg < 1 || pg > ultimaPg) {
                     res.redirect("/error" + "?mensaje=Página no válida" + "&tipoMensaje=alert-danger");
-                }
-                let paginas = []; // paginas mostrar
-                for (let i = pg - 2; i <= pg + 2; i++) {
-                    if (i > 0 && i <= ultimaPg) {
-                        paginas.push(i);
+                } else {
+                    let paginas = []; // paginas mostrar
+                    for (let i = pg - 2; i <= pg + 2; i++) {
+                        if (i > 0 && i <= ultimaPg) {
+                            paginas.push(i);
+                        }
                     }
+                    let respuesta = swig.renderFile('views/offers/listAll.html',
+                        {
+                            ofertas: ofertas,
+                            ofertasDestacadas: ofertasDestacadasView,
+                            saldo: req.session.saldo,
+                            paginas: paginas,
+                            actual: pg,
+                            email: req.session.usuario,
+                            busqueda: req.session.busqueda
+                        });
+                    res.send(respuesta);
                 }
-                let respuesta = swig.renderFile('views/offers/listAll.html',
-                    {
-                        ofertas: ofertas,
-                        ofertasDestacadas: ofertasDestacadasView,
-                        saldo: req.session.saldo,
-                        paginas: paginas,
-                        actual: pg,
-                        email: req.session.usuario,
-                        busqueda: req.session.busqueda
-                    });
-                res.send(respuesta);
             }
         });
     });
