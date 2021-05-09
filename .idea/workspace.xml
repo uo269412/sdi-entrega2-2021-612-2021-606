@@ -4,9 +4,14 @@
     <list default="true" id="4826d4db-ced0-4eb8-9004-975298d8675d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/cliente.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/cliente.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/widget-conversacion.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/widget-conversacion.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/widget-conversaciones.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/widget-conversaciones.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/widget-login.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/widget-login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/widget-ofertas.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/widget-ofertas.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/rapiconversaciones.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/rapiconversaciones.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/rapimensajes.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/rapimensajes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/rapiofertas.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/rapiofertas.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/error.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/error.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +97,11 @@
       <workItem from="1619369859021" duration="5928000" />
       <workItem from="1619433590087" duration="599000" />
       <workItem from="1619880683624" duration="12362000" />
+      <workItem from="1620311119523" duration="13717000" />
+      <workItem from="1620474518449" duration="617000" />
+      <workItem from="1620476593473" duration="78000" />
+      <workItem from="1620573931037" duration="8655000" />
+      <workItem from="1620587442039" duration="2889000" />
     </task>
     <task id="LOCAL-00001" summary="Añadidas todas las vistas y controladores para acceder a ellas">
       <created>1619231960535</created>
@@ -163,7 +173,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619367977146</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="parte Jqeury ajax para poder hacer merge con master">
+      <created>1620311275870</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1620311275870</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -192,7 +209,8 @@
     <MESSAGE value="Arreglado busqueda y añadidos router usuarios" />
     <MESSAGE value="Añadido borrar usuarios" />
     <MESSAGE value="Ahora al borrar usuarios, tambien se borran las ofertas no compradas de esos usuarios" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ahora al borrar usuarios, tambien se borran las ofertas no compradas de esos usuarios" />
+    <MESSAGE value="parte Jqeury ajax para poder hacer merge con master" />
+    <option name="LAST_COMMIT_MESSAGE" value="parte Jqeury ajax para poder hacer merge con master" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

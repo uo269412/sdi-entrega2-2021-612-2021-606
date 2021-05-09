@@ -2,31 +2,39 @@
 {% block titulo %} Página de errores {% endblock %}
 {% block contenido_principal %}
 <div class="container">
+
+  <h1> Se ha producido un error </h1>
+  <h2> Se mostrará a continuación: </h2>
+
+  <div id="error">
+  </div>
+
   <script>
     let mensaje = getUrlParameter('mensaje');
+
     let tipoMensaje = getUrlParameter('tipoMensaje');
+
     // Otra forma de recuperar los parametros de la url pero no compatible con IE
-    /* const params = new URLSearchParams(location.search);
+    /*
+    const params = new URLSearchParams(location.search);
     var mensaje = params.get("mensaje");
-    var tipoMensaje = params.get("mensaje");*/
-    if ( mensaje != ""){
-      if (tipoMensaje == "" ){
+    var tipoMensaje = params.get("mensaje");
+    */
+
+    if ( mensaje !== ""){
+      if (tipoMensaje === "" ){
         tipoMensaje = 'alert-info';
       }
-      $( ".container" )
-              .append("<div class='alert "+tipoMensaje+"'>"+mensaje+" </div>");
+      $( "#error" ).append("<div class='alert "+tipoMensaje+"'>"+mensaje+" </div>");
     }
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
       var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
       var results = regex.exec(location.search);
-      return results === null ? '' :
-              decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
   </script>
-  <!-- Contenido -->
-  {% block contenido_principal %}
-  <!-- Posible contenido por defecto -->
-  {% endblock %}
+
 </div>
 

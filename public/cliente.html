@@ -43,6 +43,19 @@
     <div class="logoWallapop">
         <img src="/static/logo-wallapop.png" alt="logo" class="logoWallapop"/>
     </div>
+    <header>
+        <div>
+            <nav class="nav nav-masthead justify-content-center float-md-none" >
+                <a class="nav-link text-decoration-none margin-sides" onclick=widgetOfertas() id="buscar-ofertas">Buscar Ofertas</a>
+                <a class="nav-link dropdown-toggle text-decoration-none margin-sides" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tu cuenta</a>
+                <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li id ="mis-ofertas">
+                        <a id="conversaciones" class="dropdown-item btn-text" onclick=widgetConversaciones() >Mis Conversaciones</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
 
 
@@ -53,15 +66,16 @@
 <script>
     let token;
     let URLbase = "https://localhost:8082/api";
+    let usuario;
 
     $( "#contenedor-principal" ).load( "widget-login.html");
 
-    if ( Cookies.get('token') != null ) {
+    if ( Cookies.get('token') !== null ) {
         token = Cookies.get('token');
 
         let url = new URL(window.location.href);
         let w = url.searchParams.get("w");
-        console.log(w);
+
         if (w === "ofertas") {
             $("#contenedor-principal").load("widget-ofertas.html");
         }
@@ -73,6 +87,14 @@
         if (w === "conversaciones") {
             $("#contenedor-principal").load("widget-conversaciones.html");
         }
+    }
+
+    function widgetOfertas(){
+        $("#contenedor-principal").load("widget-ofertas.html");
+    }
+
+    function widgetConversaciones(){
+        $("#contenedor-principal").load("widget-conversaciones.html");
     }
 </script>
 </div>
