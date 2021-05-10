@@ -190,56 +190,50 @@ module.exports = function(app, swig, gestorBD) {
         let oferta = {
             comprador: usuario
         }
-        gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
-            if (idCompra == null) {
-                res.redirect("/error" + "?mensaje=Error al modificar la oferta seleccionada (comprar oferta)" +
+        gestorBD.obtenerOfertas(criterio,function(ofertas) {
+            if (ofertas == null) {
+                res.redirect("/error" + "?mensaje=Error al obtener la oferta seleccionada (comprar oferta)" +
                     "&tipoMensaje=alert-danger");
+            } else if (ofertas[0].vendedor === req.session.usuario) {
+                res.redirect("/error" + "?mensaje=No se puede comprar la propia oferta");
             } else {
-                gestorBD.obtenerOfertas(criterio,function(ofertas){
-                    if ( ofertas == null ){
-                        res.redirect("/error" + "?mensaje=Error al obtener la oferta seleccionada (comprar oferta)" +
+                gestorBD.modificarOferta(criterio, oferta, function (idCompra) {
+                    if (idCompra == null) {
+                        res.redirect("/error" + "?mensaje=Error al modificar la oferta seleccionada (comprar oferta)" +
                             "&tipoMensaje=alert-danger");
                     } else {
-                        let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
-                        if (nuevoSaldo >= 0) {
-                            req.session.saldo = nuevoSaldo;
-                            let usuario = {
-                                saldo: nuevoSaldo
-                            }
-                            gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
-                                if (idCompra == null) {
-                                    res.redirect("/error" + "?mensaje=Error al modificar al usuario seleccionado" +
-                                        "(comprar oferta)" +
-                                        "&tipoMensaje=alert-danger");
+                        gestorBD.obtenerOfertas(criterio,function(ofertas){
+                            if ( ofertas == null ){
+                                res.redirect("/error" + "?mensaje=Error al obtener la oferta seleccionada (comprar oferta)" +
+                                    "&tipoMensaje=alert-danger");
+                            } else {
+                                let nuevoSaldo = Number(req.session.saldo) - Number(ofertas[0].precio);
+                                if (nuevoSaldo >= 0) {
+                                    req.session.saldo = nuevoSaldo;
+                                    let usuario = {
+                                        saldo: nuevoSaldo
+                                    }
+                                    gestorBD.modificarUsuario(criterioUsuarios, usuario, function (idCompra) {
+                                        if (idCompra == null) {
+                                            res.redirect("/error" + "?mensaje=Error al modificar al usuario seleccionado" +
+                                                "(comprar oferta)" +
+                                                "&tipoMensaje=alert-danger");
+                                        } else {
+                                            res.redirect("/compras");
+                                        }
+                                    });
                                 } else {
-                                    res.redirect("/compras");
+                                    res.redirect("/error" + "?mensaje=No tienes dinero suficiente para comprar esta oferta" +
+                                        "&tipoMensaje=alert-danger");
                                 }
-                            });
-                        } else {
-                            res.redirect("/error" + "?mensaje=No tienes dinero suficiente para comprar esta oferta" +
-                                "&tipoMensaje=alert-danger");
-                        }
+                            }
+                        });
                     }
                 });
             }
         });
     });
-    /**
-     * Este controlador recibe la petición GET /home, que manda al home.html datos del email y saldo del usuario en
-     * sesión
-     */
-    app.get('/home', function (req, res) {
-        let respuesta = swig.renderFile('views/home.html', {email: req.session.usuario, saldo: req.session.saldo});
-        res.send(respuesta);
-    });
 
-    /**
-     * Este controlador recibe la petición GET /, que renderiza la vista index.html
-     */
-    app.get('/', function (req, res) {
-        let respuesta = swig.renderFile('views/index.html', {});
-        res.send(respuesta);
-    });
 
     /**
      * Este controlador recibe la petición GET /oferta/nodestacar/:id, en el cual crea dos criterios para dos método

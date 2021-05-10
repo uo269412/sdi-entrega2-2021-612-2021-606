@@ -34,5 +34,15 @@ public class PO_LoginView extends PO_NavView {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "w-100 btn btn-lg btn-primary");
 		PO_LoginView.fillForm(driver, "admin@email.com", "admin");
 	}
+	
+	/**
+	 * Permite el acceso como un usuario especificado por parámetros
+	 * @param driver
+	 * @param email del usuario
+	 */
+	public static void accederUsuario(WebDriver driver, String email) {
+		PO_HomeView.clickOption(driver, "/identificarse", "class", "w-100 btn btn-lg btn-primary");
+		PO_LoginView.fillForm(driver, email, "123456");
+	}
 
 }
