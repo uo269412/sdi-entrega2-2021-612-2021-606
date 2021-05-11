@@ -196,7 +196,7 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = { comprador : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (ofertas == null || ofertas.length === 0) {
-                res.redirect("/error" + "?mensaje=Error al listar las ofertas compradas"
+                res.redirect("/error/" + "?mensaje=Error al listar las ofertas compradas"
                     + "&tipoMensaje=alert-danger");
             } else {
                 let respuesta = swig.renderFile('views/offers/listPurchased.html',

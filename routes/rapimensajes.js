@@ -52,7 +52,6 @@ module.exports = function(app, gestorBD) {
                                     res.json({
                                         conversacion: conversacion
                                     })
-
                                 }
                             });
                         }
@@ -163,8 +162,6 @@ module.exports = function(app, gestorBD) {
         let criterio = { "_id" : conversacionID}
         gestorBD.obtenerConversaciones(criterio,function(conversaciones){
             if ( conversaciones === null || conversaciones.length === 0){
-                console.log( conversaciones === null)
-                console.log(conversaciones.length)
             } else {
                 if ((conversaciones[0]).propietario === usuarioSesion || (conversaciones[0]).interesado === usuarioSesion) {
                     if (mensaje.autor !== usuarioSesion) {

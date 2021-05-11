@@ -57,6 +57,7 @@
     }
 
     function enviar(oferta){
+        console.log("1");
         $.ajax({
             url: URLbase + "/mensaje/" + oferta,
             type: "POST",
@@ -66,6 +67,7 @@
             dataType: 'json',
             headers: { "token": token },
             success: function (respuesta){
+
                 id_conversacion = respuesta.conversacion;
                 id_oferta = oferta;
             },
@@ -74,7 +76,7 @@
                 $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
             }
         });
-    };
+    }
 
     cargarOfertas();
 
