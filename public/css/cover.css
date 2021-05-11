@@ -1,0 +1,159 @@
+/*
+ * Globals
+ */
+
+
+/* Custom default button */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritance from `body` */
+}
+
+
+/*
+ * Base structure
+ */
+
+body {
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+}
+
+.cover{
+  max-width: 70em;
+}
+
+
+/*
+ * Header
+ */
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .5);
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+.butt{
+  color: rgba(255, 255, 255, .5);
+  padding: .25rem 0;
+  font-size: 50px;
+  color: rgba(255, 255, 255, .5);
+  text-decoration: inherit;
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.logoWallapop{width: 600px; margin-left: auto; margin-right: auto}
+
+.searchS{
+    float: none;
+    line-height: 60px;
+    margin: auto;
+    display: flex;
+    width: 50%;
+    padding: 10px;
+}
+
+.white{
+	color: white;
+}
+
+.container2 {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  color: white;
+}
+
+/* Darker chat container */
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+/* Clear floats */
+.container2::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Style time text */
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+/* Style time text */
+.time-left {
+  float: left;
+  color: #999;
+}
+
+.chatLeft{
+	width: 100%;
+	margin-bottom: 1rem;
+	color: #fff;
+	vertical-align: top;
+	border-color: white;
+	float:left;
+
+}
+
+.chatRight{
+	width: 100%;
+	margin-bottom: 1rem;
+	color: #fff;
+	vertical-align: top;
+	border-color: white;
+	float:right;
+
+}
+
+.text-large{
+    font-size: 20px;
+}
+
+
+.margin-normal{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.margin-sides{
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
+.text-home{
+}
+
+.margin-auto{
+    margin: auto;
+}
+
+.btn-text{
+    font-size: 18px;
+    margin: 5px;
+}

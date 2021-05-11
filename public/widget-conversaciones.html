@@ -1,0 +1,136 @@
+<div class="container">
+    <h2 >Tus Conversaciones</h2>
+    <p>Tus conversaciones que figuran en el sistema son las siguientes:</p>
+    <div class="table-responsive">
+        <table class="table white">
+            <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Email</th>
+                <th></th>
+                <th></th>
+                <th>Mensajes no leidos</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="conversacionesTabla">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=conversaciones");
+
+    var conversaciones;
+
+    function cargarConversaciones(){
+        $.ajax({
+            url: URLbase + "/conversaciones/interesado",
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                conversaciones = respuesta;
+                actualizarTabla(conversaciones);
+            },
+            error : function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> No se han encontrado conversaciones </div>");
+            }
+        });
+    }
+
+    function actualizarTabla(conver){
+        $("#conversacionesTabla").empty();// Vaciar la tabla
+        for (var i = 0; i < conver.length; i++) {
+            $("#conversacionesTabla").append(
+                "<tr>"+"<td id='"+i+"_titulo'>"+"</td>"+
+                "<td >"+conver[i].propietario+"</td>"+
+                "<td><button id='acceder' onclick=abrir('"+conver[i]._id+"')>"+"Acceder</button></td>"+
+                "<td><button id='eliminar' onclick=remove('"+conver[i]._id+"')>"+"Eliminar</button></td>"+
+                "<td id='"+i+"'>"+"</td>"+"</tr>");
+            noLeidos(conver[i]._id,i);
+            addTitulo(conver[i].oferta,i);
+        }
+    }
+
+    function abrir(id){
+        $.ajax({
+            url: URLbase + "/conversacion/" + id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                id_conversacion = id;
+                console.log(respuesta)
+                for (let i = 0; i < conversaciones.length; i++){
+                    if (conversaciones[i]._id === id){
+                        id_oferta = conversaciones[i].oferta;
+                    }
+                }
+                $("#contenedor-principal").load("widget-conversacion.html");
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    }
+
+    function remove(_id){
+        $.ajax({
+            url: URLbase + "/conversacion/" + _id,
+            type: "DELETE",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                $("#contenedor-principal").load("widget-conversaciones.html");
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al eliminar la conversacion </div>");
+            }
+        });
+    }
+
+    function noLeidos(id,i){
+        $.ajax({
+            url: URLbase + "/conversacion/noleidos/" + id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                $('#' + i).append(respuesta);
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener no leidos de la conversacion</div>");
+            }
+        });
+    }
+
+    function addTitulo(id,i){
+        $.ajax({
+            url: URLbase + "/oferta/" + id,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                $('#' + i +'_titulo').append(respuesta.titulo);
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener no leidos de la conversacion</div>");
+            }
+        });
+    }
+
+    cargarConversaciones();
+
+</script>

@@ -1,0 +1,30 @@
+{% extends "../base.html" %}
+{% block titulo %} Conversaciones {% endblock %}
+{% block contenido_principal %}
+<div class="container">
+	<h2 >Tus Conversaciones</h2>
+	<p>Tus conversaciones que figuran en el sistema son las siguientes:</p>
+	<div class="table-responsive">
+		<table class="table white">
+			<thead>
+				<tr>
+					<th >Titulo</th>
+					<th >Email</th>
+					<th ></th>
+					<th ></th>
+					<th ></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for conver in conversaciones %}
+					<td>{{conver.item.title}}</td>
+					<td>{{conver.item.description}}</td>
+					<td><a href='/conversaciones/details/' + {conver.id}>Acceder</a></td>
+					<td><a href='/conversaciones/delete/' + {conver.id}>eliminar</a>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link rel="icon" href="/static/logoWalla.png" type="image">
+    <title>My Wallapop</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+    <script src="/js/cookie.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="/css/cover.css" rel="stylesheet">
+</head>
+<body class="d-flex h-100 text-center text-white bg-dark text-large">
+
+
+<!-- Barra de Navegación superior -->
+<div class="cover d-flex h-100 p-3 mx-auto flex-column ">
+    <div class="logoWallapop">
+        <img src="/static/logo-wallapop.png" alt="logo" class="logoWallapop"/>
+    </div>
+    <header>
+        <div>
+            <nav class="nav nav-masthead justify-content-center float-md-none" >
+                <a class="nav-link text-decoration-none margin-sides" onclick=widgetOfertas() id="buscar-ofertas">Buscar Ofertas</a>
+                <a class="nav-link dropdown-toggle text-decoration-none margin-sides" href="#" id="navbarDarkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tu cuenta</a>
+                <ul id ="menu-cosas" class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li id ="mis-ofertas">
+                        <a id="conversaciones" class="dropdown-item btn-text" onclick=widgetConversaciones() >Mis Conversaciones</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+
+<!-- Contenido -->
+<div class="container" id="contenedor-principal"> <!--  id para identificar -->
+
+</div>
+<script>
+    let token;
+    let URLbase = "https://localhost:8082/api";
+    let usuario;
+
+    $( "#contenedor-principal" ).load( "widget-login.html");
+
+    if ( Cookies.get('token') !== null ) {
+        token = Cookies.get('token');
+
+        let url = new URL(window.location.href);
+        let w = url.searchParams.get("w");
+
+        if (w === "ofertas") {
+            $("#contenedor-principal").load("widget-ofertas.html");
+        }
+
+        if (w === "conversacion") {
+            $("#contenedor-principal").load("widget-conversacion.html");
+        }
+
+        if (w === "conversaciones") {
+            $("#contenedor-principal").load("widget-conversaciones.html");
+        }
+    }
+
+    function widgetOfertas(){
+        $("#contenedor-principal").load("widget-ofertas.html");
+    }
+
+    function widgetConversaciones(){
+        $("#contenedor-principal").load("widget-conversaciones.html");
+    }
+</script>
+</div>
+</body>
+</html>

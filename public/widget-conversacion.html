@@ -1,0 +1,101 @@
+<main id='widget-conversacion' class="container">
+    <h1>Conversación</h1>
+    <div id="container2" class="container2" style="margin:auto; width:1000px;">
+
+    </div>
+        <input id="elMensaje" class="form-control btn-text" placeholder="Añadir mensaje" style="width: 60%; margin: auto;" size="50">
+        <button id="elBoton" class="btn btn-lg btn-primary btn-text" name="search_button" style="width: 30%; margin-left: 10px" onclick="enviarMensaje()">Enviar</button>
+</main>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=conversacion");
+    var mensajes;
+    var id_conversacion;
+    var id_oferta;
+    function cargarMensajes(){
+        $.ajax({
+            url: URLbase + "/conversacion/" + id_conversacion,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                if(mensajes !== respuesta) {
+                    mensajes = respuesta;
+                    $("#container2").empty();
+                    actualizarMensajes(mensajes);
+                }
+            },
+            error : function (error){
+                $("#alert").remove();
+                $("#widget-conversacion").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    }
+
+    function actualizarMensajes(mensajes){
+        for (i = 0; i < mensajes.length; i++) {
+           let mensaje = mensajes[i];
+           let fecha = mensaje.fecha.split("T")[0] +" "+ mensaje.fecha.split("T")[1].split(".")[0];
+           if (mensaje.autor !== usuario){
+               $("#container2").append(
+                   "<div id='propietario' style='width: 50%; background-color: white;color: black;vertical-align: top;border-color: #d3d3d3;text-align:left;border-style:solid;border-width:medium;padding: 10px; margin-right:auto; font-size: 15px;'>" +
+                   "<p>"+mensaje.autor+"</p>"+
+                   "<p>"+mensaje.texto+"</p>"+
+                   "<p>"+fecha+"</p>"+
+                   "</div>");
+               marcarComoLeido(mensaje);
+           }else{
+               $("#container2").append(
+                   "<div id='interesado' style='width: 50%;background-color: white;color: black;vertical-align: top;border-color: #d3d3d3;text-align:right;border-style:solid;border-width:medium;padding: 10px; margin-left:auto; font-size: 15px;'>"
+                   +"<p>"+mensaje.autor+"</p>"+
+                   "<p>"+mensaje.texto+"</p>"+
+                   "<p>"+fecha+"</p>"+
+                   "</div>");
+           }
+        }
+    }
+
+    function enviarMensaje(){
+        $.ajax({
+            url: URLbase + "/mensaje/" + id_oferta,
+            type: "POST",
+            data: {
+                texto: $("#elMensaje").val()
+            },
+            headers: { "token": token },
+            dataType: 'json',
+            success: function (respuesta){
+                $("#elMensaje").val('');
+                cargarMensajes();
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-conversacion").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    }
+
+    function marcarComoLeido(mensaje){
+        console.log(mensaje);
+        $.ajax({
+            url: URLbase + "/mensaje/" + mensaje._id,
+            type: "PUT",
+            data: {},
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-conversacion").prepend("<div id='alert' class='alert alert-danger'> Ocurrió un error al marcar los mensajes como leidos </div>");
+            }
+        });
+    }
+
+
+    setInterval(function(){
+        cargarMensajes();
+    }, 1000);
+
+</script>

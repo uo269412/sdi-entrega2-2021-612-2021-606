@@ -1,0 +1,81 @@
+<div id="widget-ofertas" >
+    <h2>Ofertas</h2>
+    <p>Las ofertas que actualmente figuran en el sistema son las siguientes:</p>
+        <div class="table-responsive">
+            <table class="table white">
+                <thead>
+                <tr>
+                    <th >Titulo</th>
+                    <th >Descripción</th>
+                    <th >Precio</th>
+                    <th>Vendedor</th>
+                    <th><input id='texto'></th>
+                </tr>
+                </thead>
+                <tbody id="tablaCuerpo">
+
+                </tbody>
+            </table>
+        </div>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=ofertas");
+    var ofertas;
+    function cargarOfertas(){
+        $.ajax({
+            url: URLbase + "/ofertas",
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                ofertas = respuesta;
+                actualizarTabla(ofertas);
+            },
+            error : function (error){
+                $( "#contenedor-principal" ).load("widget-login.html");
+            }
+        });
+    }
+
+    function actualizarTabla(ofertasMostrar){
+        var tabla = $("#tablaCuerpo");
+        tabla.empty(); // Vaciar la tabla
+        for (i = 0; i < ofertasMostrar.length; i++) {
+            tabla.append(
+                "<tr>"+
+                "<td>"+ofertasMostrar[i].titulo+"</td>" +
+                "<td>"+ofertasMostrar[i].descripcion+"</td>" +
+                "<td>"+ofertasMostrar[i].precio+"</td>" +
+                "<td>"+ofertasMostrar[i].vendedor+"</td>"+
+                "<td>" +
+                "<button onclick=enviar('"+ofertasMostrar[i]._id+"') class='btn btn-lg btn-primary' style='margin-left: 10px;'>Enviar Mensaje</button>"+
+                "</td>"+
+                "</tr>");
+        }
+    }
+
+    function enviar(oferta){
+        $.ajax({
+            url: URLbase + "/mensaje/" + oferta,
+            type: "POST",
+            data: {
+                texto: $("#texto").val()
+            },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function (respuesta){
+                id_conversacion = respuesta.conversacion;
+                id_oferta = oferta;
+            },
+            error: function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> Error al obtener la conversacion </div>");
+            }
+        });
+    };
+
+    cargarOfertas();
+
+</script>
