@@ -63,16 +63,16 @@ public class SdiEntrega2Tests_ALT {
 
 	// LOGIN
 
-	// PR05. Inicio de sesión con datos válidos.
+	// PR05. Inicio de sesiï¿½n con datos vï¿½lidos.
 	@Test
 	public void PR05() {
 		//Primero registramos al usuario
 		PO_RegisterView.registrarUsuarioTest(driver, 5);
-		//Después de haberlo creado nos desconectamos
+		//Despuï¿½s de haberlo creado nos desconectamos
 		PO_NavView.disconnect(driver);
 		//Y volvemos a la pantalla principal
 		driver.navigate().to(URL);
-		//Clickamos en la opción de loggearse
+		//Clickamos en la opciï¿½n de loggearse
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "w-100 btn btn-lg btn-primary");
 		// Rellenamos el formulario con los datos del usuario que acabamos de crear
 		PO_LoginView.fillForm(driver, "PR5@PR5.com", "123456");
@@ -81,28 +81,28 @@ public class SdiEntrega2Tests_ALT {
 	}
 	
 
-	// PR08. Inicio de sesión con datos inválidos (usuario estándar, email no
-	// existente en la aplicación).
+	// PR08. Inicio de sesiï¿½n con datos invï¿½lidos (usuario estï¿½ndar, email no
+	// existente en la aplicaciï¿½n).
 	@Test
 	public void PR08() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "w-100 btn btn-lg btn-primary");
 		// Rellenamos el formulario con un usuario que no existe en la base de datos
 		PO_LoginView.fillForm(driver, "usuarioNoExiste@usuarioNoExiste.com", "123");
 		// Comprobamos que nos sale el error correspondiente
-		PO_View.checkElement(driver, "text", "El usuario no existe en la base de datos o la contraseña es incorrecta");
+		PO_View.checkElement(driver, "text", "El usuario no existe en la base de datos o la contraseÃ±a es incorrecta");
 	}
 
 	// LOGOUT
 
-	// PR09. Hacer click en la opción de salir de sesión y comprobar que se redirige
-	// a la página de inicio de sesión (Login).
+	// PR09. Hacer click en la opciï¿½n de salir de sesiï¿½n y comprobar que se redirige
+	// a la pï¿½gina de inicio de sesiï¿½n (Login).
 	@Test
 	public void PR09() {
 		//Primero registramos el usuario que vamos a utilizar
 		PO_RegisterView.registrarUsuarioTest(driver, 9);
 		//Nos desconectamos correctamente
 		PO_NavView.disconnect(driver);
-		//Volvemos a la página principal
+		//Volvemos a la pï¿½gina principal
 		driver.navigate().to(URL);
 		
 		//Accedemos a identificarnos
@@ -113,8 +113,8 @@ public class SdiEntrega2Tests_ALT {
 		PO_View.checkElement(driver, "text", "Bienvenido/a a MyWallapop");
 		//Nos desconectamos
 		PO_NavView.disconnect(driver);
-		//Ahora estamos en la página de login
-		PO_View.checkElement(driver, "text", "Accede a la aplicación con un usuario ya identificado");
+		//Ahora estamos en la pï¿½gina de login
+		PO_View.checkElement(driver, "text", "Accede a la aplicaciÃ³n con un usuario ya identificado");
 
 	}
 
@@ -124,7 +124,7 @@ public class SdiEntrega2Tests_ALT {
 	// que existen en el sistema.
 	@Test
 	public void PR11() {
-		//Utilizamos este método para crear tres usuarios en la base de datos
+		//Utilizamos este mï¿½todo para crear tres usuarios en la base de datos
 		PO_RegisterView.createUsers(driver, URL, 11, 3);
 		//Accedemos como administrador
 		PO_LoginView.accederAdmin(driver);
@@ -141,7 +141,7 @@ public class SdiEntrega2Tests_ALT {
 	// comprobar que la lista se actualiza y que el usuario desaparece.
 	@Test
 	public void PR12() {
-		//Utilizamos este método para crear tres usuarios en la base de datos
+		//Utilizamos este mï¿½todo para crear tres usuarios en la base de datos
 		PO_RegisterView.createUsers(driver, URL, 12, 3);
 		//Accedemos como administrador
 		PO_LoginView.accederAdmin(driver);
@@ -153,28 +153,28 @@ public class SdiEntrega2Tests_ALT {
 		//Y ahora le damos a borrar
 		elementos = driver.findElements(By.name("buttonEliminar"));
 		elementos.get(0).click();
-		//Así comprobamos que ahora hay dos usuarios en el listado
+		//Asï¿½ comprobamos que ahora hay dos usuarios en el listado
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
 		assertTrue(elementos.size() == 2);
 	}
 
-	// PR13. Ir a la lista de usuarios, borrar el último usuario de la lista,
+	// PR13. Ir a la lista de usuarios, borrar el ï¿½ltimo usuario de la lista,
 	// comprobar que la lista se actualiza y que el usuario desaparece.
 	@Test
 	public void PR13() {
-		//Utilizamos este método para crear tres usuarios en la base de datos
+		//Utilizamos este mï¿½todo para crear tres usuarios en la base de datos
 		PO_RegisterView.createUsers(driver, URL, 13, 3);
 		//Accedemos como administrador
 		PO_LoginView.accederAdmin(driver);
 		List<WebElement> elementos = driver.findElements(By.name("deleteUser"));
 		//Comprobamos que se encuentran los tres usuarios que creamos previamente
 		assertTrue(elementos.size() == 3);
-		//Clickamos el checkbox del último
+		//Clickamos el checkbox del ï¿½ltimo
 		elementos.get(elementos.size()-1).click();
 		//Y ahora le damos a borrar
 		elementos = driver.findElements(By.name("buttonEliminar"));
 		elementos.get(0).click();
-		//Así comprobamos que ahora hay dos usuarios en el listado
+		//Asï¿½ comprobamos que ahora hay dos usuarios en el listado
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
 		assertTrue(elementos.size() == 2);	
 	}
@@ -183,7 +183,7 @@ public class SdiEntrega2Tests_ALT {
 	// actualiza y que los usuarios desaparecen.
 	@Test
 	public void PR14() {
-		//Utilizamos este método para crear seis usuarios en la base de datos
+		//Utilizamos este mï¿½todo para crear seis usuarios en la base de datos
 		PO_RegisterView.createUsers(driver, URL, 14, 6);
 		//Accedemos como administrador
 		PO_LoginView.accederAdmin(driver);
@@ -202,10 +202,10 @@ public class SdiEntrega2Tests_ALT {
 		assertTrue(elementos.size() == 3);
 	}
 
-	// AÑADIR OFERTA
+	// Aï¿½ADIR OFERTA
 
-	// PR15. Ir al formulario de alta de oferta, rellenarla con datos válidos y
-	// pulsar el botón Submit. Comprobar que la oferta sale en el listado de ofertas
+	// PR15. Ir al formulario de alta de oferta, rellenarla con datos vï¿½lidos y
+	// pulsar el botï¿½n Submit. Comprobar que la oferta sale en el listado de ofertas
 	// de dicho usuario.
 	@Test
 	public void PR15() {
@@ -213,7 +213,7 @@ public class SdiEntrega2Tests_ALT {
 		PO_RegisterView.registrarUsuarioTest(driver, 15);
 		//Vamos a vender
 		PO_NavView.accessVender(driver);
-		//Añadimos una oferta
+		//Aï¿½adimos una oferta
 		PO_AddItemView.fillForm(driver, "PR15Oferta", "PR15Descripcion", "15", false);
 		//Ahora accedemos al listado de ofertas propias y vemos que se ha registrado en el listado
 		PO_NavView.verListaPropia(driver);
@@ -222,8 +222,8 @@ public class SdiEntrega2Tests_ALT {
 		assertTrue(elementos.size() == 1);
 	}
 
-	// PR16. Ir al formulario de alta de oferta, rellenarla con datos inválidos
-	// (campo título vacío y precio en negativo) y pulsar el botón Submit. Comprobar que se muestra el
+	// PR16. Ir al formulario de alta de oferta, rellenarla con datos invï¿½lidos
+	// (campo tï¿½tulo vacï¿½o y precio en negativo) y pulsar el botï¿½n Submit. Comprobar que se muestra el
 	// mensaje de campo obligatorio.
 	@Test
 	public void PR16() {
@@ -231,10 +231,10 @@ public class SdiEntrega2Tests_ALT {
 		PO_RegisterView.registrarUsuarioTest(driver, 16);
 		//Vamos a vender
 		PO_NavView.accessVender(driver);
-		//Añadimos una oferta que no tenga título y con precio negativo
+		//Aï¿½adimos una oferta que no tenga tï¿½tulo y con precio negativo
 		PO_AddItemView.fillForm(driver, "", "PR16Descripcion", "-5.0", false);
 		//Vemos que nos aparecen los dos errores
-		PO_View.checkElement(driver, "text", "Se tiene que añadir un título");
+		PO_View.checkElement(driver, "text", "Se tiene que aÃ±adir un tÃ­tulo");
 		PO_View.checkElement(driver, "text", "El precio no puede ser negativo o cero");
 	}
 
@@ -246,8 +246,8 @@ public class SdiEntrega2Tests_ALT {
 	public void PR17() {
 		//Nos registramos con el usuario que vamos a utilizar para el test
 		PO_RegisterView.registrarUsuarioTest(driver, 17);
-		//Ahora añadimos tres ofertas con ese usuario
-		PO_AddItemView.añadirItems(driver, 17, 3);
+		//Ahora aï¿½adimos tres ofertas con ese usuario
+		PO_AddItemView.aÃ±adirItems(driver, 17, 3);
 		//Vamos a la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene las tres ofertas que ha creado
@@ -264,8 +264,8 @@ public class SdiEntrega2Tests_ALT {
 	public void PR18() {	
 		//Nos registramos con el usuario que vamos a utilizar para el test
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		//Ahora añadimos tres ofertas con ese usuario
-		PO_AddItemView.añadirItems(driver, 18, 3);
+		//Ahora aï¿½adimos tres ofertas con ese usuario
+		PO_AddItemView.aÃ±adirItems(driver, 18, 3);
 		//Vamos a la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene las tres ofertas que ha creado
@@ -275,19 +275,19 @@ public class SdiEntrega2Tests_ALT {
 		//Ahora le damos a el enlace eliminar la oferta
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@href, '/oferta/eliminar')]");
 		elementos.get(0).click();
-		//Ahora habrá dos elementos
+		//Ahora habrï¿½ dos elementos
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
 		assertTrue(elementos.size() == 2);
 	}
 
-	// PR19. Ir a la lista de ofertas, borrar la última oferta de la lista,
+	// PR19. Ir a la lista de ofertas, borrar la ï¿½ltima oferta de la lista,
 	// comprobar que la lista se actualiza y que la oferta desaparece.
 	@Test
 	public void PR19() {
 		//Nos registramos con el usuario que vamos a utilizar para el test
 		PO_RegisterView.registrarUsuarioTest(driver, 19);
-		//Ahora añadimos tres ofertas con ese usuario
-		PO_AddItemView.añadirItems(driver, 19, 3);
+		//Ahora aï¿½adimos tres ofertas con ese usuario
+		PO_AddItemView.aÃ±adirItems(driver, 19, 3);
 		//Vamos a la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene las tres ofertas que ha creado
@@ -297,102 +297,102 @@ public class SdiEntrega2Tests_ALT {
 		//Ahora le damos a el enlace eliminar la oferta
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@href, '/oferta/eliminar')]");
 		elementos.get(elementos.size()-1).click();
-		//Ahora habrá dos elementos
+		//Ahora habrï¿½ dos elementos
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
 		assertTrue(elementos.size() == 2);
 	}
 
 	// BUSCAR OFERTAS
 
-	// PR20. Hacer una búsqueda con el campo vacío y comprobar que se muestra la
-	// página que corresponde con el listado de las ofertas existentes en el sistema
+	// PR20. Hacer una bï¿½squeda con el campo vacï¿½o y comprobar que se muestra la
+	// pï¿½gina que corresponde con el listado de las ofertas existentes en el sistema
 	@Test
 	public void PR20() {
-		//Creamos el usuario 18 y vendemos con él 2 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 2 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 2);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 2);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Creamos el usuario 19 y vendemos con él otras 2 ofertas
+		//Creamos el usuario 19 y vendemos con ï¿½l otras 2 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 19);
-		PO_AddItemView.añadirItems(driver, 19, 2);
+		PO_AddItemView.aÃ±adirItems(driver, 19, 2);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 20);
 		//Accedemos a la lista de todos los usuarios
 		PO_NavView.verListaTodos(driver);
 		//Comprobamos que hay cuatro ofertas disponibles
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 4);
-		//Comprobamos que si no introducimos nada en la barra de búsqueda y le damos a buscar...
+		//Comprobamos que si no introducimos nada en la barra de bï¿½squeda y le damos a buscar...
 		PO_SearchBox.fillForm(driver, "");
 		//... sigue habiendo cuatro elementos justo
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 4);
 	}
 
-	// PR21. Hacer una búsqueda escribiendo en el campo un texto que no exista y
-	// comprobar que se muestra la página que corresponde, con la lista de ofertas
-	// vacía.
+	// PR21. Hacer una bï¿½squeda escribiendo en el campo un texto que no exista y
+	// comprobar que se muestra la pï¿½gina que corresponde, con la lista de ofertas
+	// vacï¿½a.
 	@Test
 	public void PR21() {
-		//Creamos el usuario 18 y vendemos con él 2 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 2 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 2);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 2);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Creamos el usuario 19 y vendemos con él otras 2 ofertas
+		//Creamos el usuario 19 y vendemos con ï¿½l otras 2 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 19);
-		PO_AddItemView.añadirItems(driver, 19, 2);
+		PO_AddItemView.aÃ±adirItems(driver, 19, 2);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 21);
 		//Accedemos a la lista de todos los usuarios
 		PO_NavView.verListaTodos(driver);
 		//Comprobamos que hay cuatro ofertas disponibles
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 4);
-		//Comprobamos que si introducimos un título cuyo nombre no se corresponde a ninguno, en la barra de búsqueda y le damos a buscar...
+		//Comprobamos que si introducimos un tï¿½tulo cuyo nombre no se corresponde a ninguno, en la barra de bï¿½squeda y le damos a buscar...
 		PO_SearchBox.fillForm(driver, "no existo");
-		//... ya no hay ningún elemento
+		//... ya no hay ningï¿½n elemento
 		SeleniumUtils.textoNoPresentePagina(driver, "Comprar");
 	}
 
-	// PR22. Hacer una búsqueda escribiendo en el campo un texto en minúscula o
-	// mayúscula y
-	// comprobar que se muestra la página que corresponde, con la lista de ofertas
+	// PR22. Hacer una bï¿½squeda escribiendo en el campo un texto en minï¿½scula o
+	// mayï¿½scula y
+	// comprobar que se muestra la pï¿½gina que corresponde, con la lista de ofertas
 	// que contengan
-	// dicho texto, independientemente que el título esté almacenado en minúsculas o
-	// mayúscula.
+	// dicho texto, independientemente que el tï¿½tulo estï¿½ almacenado en minï¿½sculas o
+	// mayï¿½scula.
 	@Test
 	public void PR22() {
-		//Creamos el usuario 18 y vendemos con él 3 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 3 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 3);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 3);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Creamos el usuario 19 y vendemos con él la oferta que buscaremos
+		//Creamos el usuario 19 y vendemos con ï¿½l la oferta que buscaremos
 		PO_RegisterView.registrarUsuarioTest(driver, 19);
 		PO_NavView.accessVender(driver);
-		PO_AddItemView.fillForm(driver, "muñeco", "antiguo", "20", false);
+		PO_AddItemView.fillForm(driver, "muÃ±eco", "antiguo", "20", false);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 22);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
 		//Comprobamos que hay cuatro ofertas disponibles
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 4);
-		//Comprobamos que si no introducimos nada en la barra de búsqueda y le damos a buscar...
+		//Comprobamos que si no introducimos nada en la barra de bï¿½squeda y le damos a buscar...
 		PO_SearchBox.fillForm(driver, "mu");
 		//... ahora solo hay un elemento
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
@@ -401,14 +401,14 @@ public class SdiEntrega2Tests_ALT {
 
 	// COMPRAR OFERTAS
 
-	// PR23. Sobre una búsqueda determinada (a elección del desarrollador), comprar
+	// PR23. Sobre una bï¿½squeda determinada (a elecciï¿½n del desarrollador), comprar
 	// una oferta que deja un saldo positivo en el contador del comprador. Comprobar
 	// que el contador se actualiza correctamente en la vista del comprador.
 	@Test
 	public void PR23() {	
-		//Creamos el usuario 18 y vendemos con él 3 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 3 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 3);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 3);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
@@ -419,7 +419,7 @@ public class SdiEntrega2Tests_ALT {
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 23);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
@@ -431,20 +431,20 @@ public class SdiEntrega2Tests_ALT {
 		//Vemos que solo hay una
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 1);
-		//Le damos al botón de comprar
+		//Le damos al botï¿½n de comprar
 		driver.findElements(By.name("buttonComprar")).get(0).click();
 		//Comprobamos que el saldo se actualiza a 100-30 = 70
-		PO_NavView.comprobarSaldo(driver, "70 €");
+		PO_NavView.comprobarSaldo(driver, "70 ï¿½");
 	}
 
-	// PR24. Sobre una búsqueda determinada (a elección del desarrollador), comprar
+	// PR24. Sobre una bï¿½squeda determinada (a elecciï¿½n del desarrollador), comprar
 	// una oferta que deja un saldo 0 en el contador del comprador. Comprobar que el
 	// contador se actualiza correctamente en la vista del comprador.
 	@Test
 	public void PR24() {
-		//Creamos el usuario 18 y vendemos con él 3 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 3 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 3);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 3);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
@@ -455,7 +455,7 @@ public class SdiEntrega2Tests_ALT {
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 24);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
@@ -467,20 +467,20 @@ public class SdiEntrega2Tests_ALT {
 		//Vemos que solo hay una
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 1);
-		//Le damos al botón de comprar
+		//Le damos al botï¿½n de comprar
 		driver.findElements(By.name("buttonComprar")).get(0).click();
 		//Comprobamos que el saldo se actualiza a 100-100 = 0
-		PO_NavView.comprobarSaldo(driver, "0 €");
+		PO_NavView.comprobarSaldo(driver, "0â‚¬");
 	}
 
-	// PR25. Sobre una búsqueda determinada (a elección del desarrollador), intentar
-	// comprar una oferta que esté por encima de saldo disponible del comprador. Y
+	// PR25. Sobre una bï¿½squeda determinada (a elecciï¿½n del desarrollador), intentar
+	// comprar una oferta que estï¿½ por encima de saldo disponible del comprador. Y
 	// comprobar que se muestra el mensaje de saldo no suficiente.
 	@Test
 	public void PR25() {
-		//Creamos el usuario 18 y vendemos con él 3 ofertas
+		//Creamos el usuario 18 y vendemos con ï¿½l 3 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 18);
-		PO_AddItemView.añadirItems(driver, 18, 3);
+		PO_AddItemView.aÃ±adirItems(driver, 18, 3);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
@@ -491,7 +491,7 @@ public class SdiEntrega2Tests_ALT {
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 25);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
@@ -503,31 +503,31 @@ public class SdiEntrega2Tests_ALT {
 		//Vemos que solo hay una
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 1);
-		//Le damos al botón de comprar
+		//Le damos al botï¿½n de comprar
 		try {
 		driver.findElements(By.name("buttonComprar")).get(0).click();
 		} catch (ElementClickInterceptedException ex) {
-			//El botón está deshabilitado
+			//El botï¿½n estï¿½ deshabilitado
 		}
-		//Comprobamos que el saldo no se actualiza ya que el botón de comprar está deshabilitado para aquellas ofertas que valgan más de lo que el usuario tiene de saldo
-		PO_NavView.comprobarSaldo(driver, "100 €");
+		//Comprobamos que el saldo no se actualiza ya que el botï¿½n de comprar estï¿½ deshabilitado para aquellas ofertas que valgan mï¿½s de lo que el usuario tiene de saldo
+		PO_NavView.comprobarSaldo(driver, "100â‚¬");
 	}
 
 
 	// VER LISTADO COMPRAS PROPIAS
 
-	// PR26. Ir a la opción de ofertas compradas del usuario y mostrar la lista.
+	// PR26. Ir a la opciï¿½n de ofertas compradas del usuario y mostrar la lista.
 	// Comprobar que aparecen las ofertas que deben aparecer.
 	@Test
 	public void PR26() {
-		//Creamos el usuario 10 y vendemos con él 3 ofertas
+		//Creamos el usuario 10 y vendemos con ï¿½l 3 ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 10);
-		PO_AddItemView.añadirItems(driver, 10, 3);
+		PO_AddItemView.aÃ±adirItems(driver, 10, 3);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
 		
-		//Nos registramos como el usuario que comprará
+		//Nos registramos como el usuario que comprarï¿½
 		PO_RegisterView.registrarUsuarioTest(driver, 26);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
@@ -545,7 +545,7 @@ public class SdiEntrega2Tests_ALT {
 		//Si volvemos a comprar otra oferta
 		driver.findElements(By.name("buttonComprar")).get(0).click();
 		PO_NavView.verListaComprados(driver);
-		//Cuando volvamos a las compras del usuario veremos que ahora hay otra más
+		//Cuando volvamos a las compras del usuario veremos que ahora hay otra mï¿½s
 		elementosComprados = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
 				PO_View.getTimeout());
 		assertTrue(elementosComprados.size() == 2);
@@ -553,18 +553,18 @@ public class SdiEntrega2Tests_ALT {
 		
 	// DESTACADO
 
-	// PR27. Al crear una oferta marcar dicha oferta como destacada y a continuación comprobar: i)
+	// PR27. Al crear una oferta marcar dicha oferta como destacada y a continuaciï¿½n comprobar: i)
 	// que aparece en el listado de ofertas destacadas para los usuarios y que el saldo del usuario se
 	// actualiza adecuadamente en la vista del ofertante (-20).
 	@Test
 	public void PR27() {
-		//Entramos como el usuario que destacará la oferta
+		//Entramos como el usuario que destacarï¿½ la oferta
 		PO_RegisterView.registrarUsuarioTest(driver, 27);
 		PO_NavView.accessVender(driver);
-		//Al ponerle true le estamos diciendo que la oferta se destacará
+		//Al ponerle true le estamos diciendo que la oferta se destacarï¿½
 		PO_AddItemView.fillForm(driver, "PR27Oferta", "PR27Descripcion", "15", true);
 		//Comprobamos que efectivamente el saldo se ha reducido en 20
-		PO_NavView.comprobarSaldo(driver, "80 €");
+		PO_NavView.comprobarSaldo(driver, "80â‚¬");
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
@@ -577,16 +577,16 @@ public class SdiEntrega2Tests_ALT {
 		assertEquals(elementos.size(), 1);
 	}
 	
-	// PR28. Sobre el listado de ofertas de un usuario con más de 20 euros de saldo, pinchar en el
-	// enlace Destacada y a continuación comprobar: i) que aparece en el listado de ofertas destacadas
+	// PR28. Sobre el listado de ofertas de un usuario con mï¿½s de 20 euros de saldo, pinchar en el
+	// enlace Destacada y a continuaciï¿½n comprobar: i) que aparece en el listado de ofertas destacadas
 	// para los usuarios y que el saldo del usuario se actualiza adecuadamente en la vista del ofertante (-
 	// 20).
 	@Test
 	public void PR28() {
 		//Nos registramos con el usuario que vamos a utilizar para el test
 		PO_RegisterView.registrarUsuarioTest(driver, 28);
-		//Ahora añadimos tres ofertas normales con ese usuario
-		PO_AddItemView.añadirItems(driver, 28, 3);
+		//Ahora aï¿½adimos tres ofertas normales con ese usuario
+		PO_AddItemView.aÃ±adirItems(driver, 28, 3);
 		//Vamos a la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene las tres ofertas que ha creado
@@ -598,7 +598,7 @@ public class SdiEntrega2Tests_ALT {
 		//Y destacamos la primera
 		elementos.get(0).click();
 		//Vemos que el saldo se nos reduce en 20
-		PO_NavView.comprobarSaldo(driver, "80 €");
+		PO_NavView.comprobarSaldo(driver, "80â‚¬");
 		//Nos salimos de este usuario
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
@@ -614,18 +614,18 @@ public class SdiEntrega2Tests_ALT {
 
 	// PR29. Sobre el listado de ofertas de un usuario con menos de 20 euros de
 	// saldo, pinchar en el
-	// enlace Destacada y a continuación comprobar que se muestra el mensaje de
+	// enlace Destacada y a continuaciï¿½n comprobar que se muestra el mensaje de
 	// saldo no suficiente.
 	@Test
 	public void PR29() {
-		//Creamos el usuario 28 y vendemos desde su perfil el objeto a comprar que deje el saldo en un número menor que 20
+		//Creamos el usuario 28 y vendemos desde su perfil el objeto a comprar que deje el saldo en un nï¿½mero menor que 20
 		PO_RegisterView.registrarUsuarioTest(driver, 19);
 		PO_NavView.accessVender(driver);
 		PO_AddItemView.fillForm(driver, "objetoCaro", "objeto que se va a comprar", "90", false);
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
 		
-		//Nos registramos como el usuario que buscará las ofertas
+		//Nos registramos como el usuario que buscarï¿½ las ofertas
 		PO_RegisterView.registrarUsuarioTest(driver, 29);
 		//Accedemos a la lista de todas los ofertas
 		PO_NavView.verListaTodos(driver);
@@ -637,14 +637,14 @@ public class SdiEntrega2Tests_ALT {
 		//Vemos que solo hay una
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "Comprar", PO_View.getTimeout());
 		assertTrue(elementos.size() == 1);
-		//Le damos al botón de comprar
+		//Le damos al botï¿½n de comprar
 		driver.findElements(By.name("buttonComprar")).get(0).click();
 		//Comprobamos que el saldo se actualiza a 100-90 = 10
-		PO_NavView.comprobarSaldo(driver, "10 €");
+		PO_NavView.comprobarSaldo(driver, "10 ï¿½");
 		
 		//Ahora vamos al listado propio a ver si podemos destacarlo
-		//Añadimos un item que será el que intentemos destacar
-		PO_AddItemView.añadirItems(driver, 29, 1);
+		//Aï¿½adimos un item que serï¿½ el que intentemos destacar
+		PO_AddItemView.aÃ±adirItems(driver, 29, 1);
 		//Vamos a la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene la oferta que ha creado
@@ -657,23 +657,23 @@ public class SdiEntrega2Tests_ALT {
 		try {
 			elementos.get(0).click();
 		} catch (ElementClickInterceptedException ex) {
-			//El botón está deshabilitado
+			//El botï¿½n estï¿½ deshabilitado
 		}
 		//Vemos que el saldo no se ha reducido ya que no se ha destacado la oferta
-		PO_NavView.comprobarSaldo(driver, "10 €");
+		PO_NavView.comprobarSaldo(driver, "10â‚¬");
 	}
 	
 	
-	// PREX01. Tras destacar una oferta, ver que podemos dejar de destacarla, lo que devolverá 20 euros y hará que no se siga viendo en el listado de destacadas
+	// PREX01. Tras destacar una oferta, ver que podemos dejar de destacarla, lo que devolverï¿½ 20 euros y harï¿½ que no se siga viendo en el listado de destacadas
 	@Test
 	public void PREX01() {
-		//Entramos como el usuario que destacará la oferta
+		//Entramos como el usuario que destacarï¿½ la oferta
 		PO_RegisterView.registrarUsuarioTest(driver, 41);
 		PO_NavView.accessVender(driver);
-		//Al ponerle true le estamos diciendo que la oferta se destacará
+		//Al ponerle true le estamos diciendo que la oferta se destacarï¿½
 		PO_AddItemView.fillForm(driver, "PR41Oferta", "PR41Descripcion", "41", true);
 		//Comprobamos que efectivamente el saldo se ha reducido en 20
-		PO_NavView.comprobarSaldo(driver, "80 €");
+		PO_NavView.comprobarSaldo(driver, "80â‚¬");
 		//Vamos a ver la lista de ofertas propias
 		PO_NavView.verListaPropia(driver);
 		//Vemos que el usuario tiene la oferta que acaba de crear
@@ -685,7 +685,7 @@ public class SdiEntrega2Tests_ALT {
 		//Y destacamos la primera
 		elementos.get(0).click();
 		//Vemos que el saldo nos vuelve a aumentar en 20 euros
-		PO_NavView.comprobarSaldo(driver, "100 €");
+		PO_NavView.comprobarSaldo(driver, "100â‚¬");
 		
 		PO_NavView.disconnect(driver);
 		driver.navigate().to(URL);
