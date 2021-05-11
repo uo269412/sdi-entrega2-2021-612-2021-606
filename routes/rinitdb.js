@@ -69,8 +69,9 @@ module.exports = function(app, gestorBD) {
                 let ofertamjer3 = insertarOferta("Raqueta de pingpong", "Se incluye red", 20.0, "123jeremy@gmail.com", null, true, res);
                 let ofertamjer4 = insertarOferta("Raqueta de frontón", "Se incluyen dos pelotas", 90.0, "123jeremy@gmail.com", null, false, res);
 
-
-
+                let conversacion1 = insertarConversacion("futbol345@gmail.com","paula_22@gmail.com","609a84a0109df63d34a4cb2e","Falda de cuero",res);
+                let conversacion2 = insertarConversacion("123jeremy@gmail.com","jueguetesParaTodos@gmail.com","609a84a0109df63d34a4cb2e","Tobilleras",res);
+                let conversacion3 = insertarConversacion("123jeremy@gmail.com","paula_22@gmail.com","609a84a0109df63d34a4cb2e","Cuadro de Picasso",res);
 
             }
         });
@@ -165,11 +166,12 @@ module.exports = function(app, gestorBD) {
      * @param oferta
      * @param res
      */
-    function insertarConversacion(interesado, propietario, oferta, res) {
+    function insertarConversacion(interesado, propietario, oferta,titulo, res) {
         let conversacion = {
             interesado: interesado,
             propietario: propietario,
-            oferta: gestorBD.mongo.ObjectID(oferta)
+            oferta: gestorBD.mongo.ObjectID(oferta),
+            titulo: titulo
         }
         gestorBD.insertarConversacion(conversacion, function (id) {
             if (id == null) {

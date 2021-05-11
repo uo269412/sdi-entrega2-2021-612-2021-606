@@ -268,7 +268,7 @@ module.exports = function(app, swig, gestorBD) {
         }
         let criterioFinal = {"$or": criterio};
       
-        gestorBD.eliminarUsuarios(criterioFinal, function(usuarios) {
+        gestorBD.obtenerUsuarios(criterioFinal, function(usuarios) {
             if (usuarios == null || usuarios.length === 0) {
                 res.redirect("/error" + "?mensaje=Error al eliminar los usuarios"
                     + "&tipoMensaje=alert-danger");

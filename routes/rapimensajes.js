@@ -50,9 +50,6 @@ module.exports = function(app, gestorBD) {
                                 } else {
                                     insertarMensaje(id, errors, req, res);
                                     res.status(201);
-                                    res.json({
-                                        conversacion: conversacion
-                                    })
                                 }
                             });
                         }

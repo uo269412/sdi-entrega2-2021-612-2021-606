@@ -23,7 +23,7 @@
     window.history.pushState("", "", "/cliente.html?w=conversaciones");
 
     var conversaciones;
-
+    var conversacionesPropiertario;
     function cargarConversaciones(){
         $.ajax({
             url: URLbase + "/conversaciones/interesado",
@@ -41,6 +41,24 @@
             }
         });
     }
+    function cargarConversacionesPropietario(){
+        $.ajax({
+            url: URLbase + "/conversaciones/propietario",
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                conversacionesPropiertario = respuesta;
+                actualizarTablaPropietario(conversacionesPropiertario);
+            },
+            error : function (error){
+                $("#alert").remove();
+                $("#widget-ofertas").prepend("<div id='alert' class='alert alert-danger'> No se han encontrado conversaciones </div>");
+            }
+        });
+    }
+
 
     function actualizarTabla(conver){
         $("#conversacionesTabla").empty();// Vaciar la tabla
@@ -53,6 +71,19 @@
                 "<td id='"+i+"'>"+"</td>"+"</tr>");
             noLeidos(conver[i]._id,i);
             addTitulo(conver[i].oferta,i);
+        }
+    }
+
+    function  actualizarTablaPropietario(conver){
+        for (var i = 0; i < conver.length; i++) {
+            $("#conversacionesTabla").append(
+                "<tr>"+"<td id='"+i+"2_titulo'>"+"</td>"+
+                "<td >"+conver[i].interesado+"</td>"+
+                "<td><button id='acceder' name='"+conver[i].interesado+"' onclick=abrir('"+conver[i]._id+"')>"+"Acceder</button></td>"+
+                "<td><button id='eliminar' onclick=remove('"+conver[i]._id+"')>"+"Eliminar</button></td>"+
+                "<td id='"+i+"2'>"+"</td>"+"</tr>");
+            noLeidos(conver[i]._id,i+'2');
+            addTitulo(conver[i].oferta,i+'2');
         }
     }
 
@@ -105,6 +136,7 @@
             dataType: 'json',
             headers: { "token": token },
             success: function (respuesta){
+                $('#' + i).empty();
                 $('#' + i).append(respuesta);
             },
             error: function (error){
@@ -122,6 +154,7 @@
             dataType: 'json',
             headers: { "token": token },
             success: function (respuesta){
+                console.log(respuesta.titulo);
                 $('#' + i +'_titulo').append(respuesta.titulo);
             },
             error: function (error){
@@ -132,5 +165,6 @@
     }
 
     cargarConversaciones();
+    cargarConversacionesPropietario();
 
 </script>

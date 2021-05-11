@@ -99,7 +99,6 @@ routerUsuarioSession.use(function(req, res, next) {
             next();
         }
     } else {
-        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -122,7 +121,6 @@ routerUsuarioSessionAdmin.use(function(req, res, next) {
             next();
         }
     } else {
-        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -139,7 +137,6 @@ routerUsuarioSessionBase.use(function(req, res, next) {
             // dejamos correr la petición
             next();
     } else {
-        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -154,7 +151,6 @@ let routerNoHayUsuario = express.Router();
 routerNoHayUsuario.use(function(req, res, next) {
     console.log("routerNoHayUsuario");
     if ( req.session.usuario ) {
-        console.log("va a : "+req.session.destino)
         res.redirect("/home");
     } else {
         next();
@@ -175,7 +171,6 @@ routerUsuarioVendedor.use(function(req, res, next) {
             if(ofertas[0].vendedor === req.session.usuario ){
                 next();
             } else {
-                console.log("va a : "+req.session.destino)
                 res.redirect("/ofertas");
             }
         })

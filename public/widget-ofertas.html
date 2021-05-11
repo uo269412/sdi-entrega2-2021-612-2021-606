@@ -9,7 +9,7 @@
                     <th >Descripción</th>
                     <th >Precio</th>
                     <th>Vendedor</th>
-                    <th><input id='texto'></th>
+                    <th><input id='texto' name="mensaje" type="textr"></th>
                 </tr>
                 </thead>
                 <tbody id="tablaCuerpo">
@@ -50,7 +50,7 @@
                 "<td>"+ofertasMostrar[i].precio+"</td>" +
                 "<td>"+ofertasMostrar[i].vendedor+"</td>"+
                 "<td>" +
-                "<button onclick=enviar('"+ofertasMostrar[i]._id+"') class='btn btn-lg btn-primary' style='margin-left: 10px;'>Enviar Mensaje</button>"+
+                "<button id='"+ofertasMostrar[i].vendedor+"' onclick=enviar('"+ofertasMostrar[i]._id+"') class='btn btn-lg btn-primary' style='margin-left: 10px;' name='enviar'>Enviar Mensaje</button>"+
                 "</td>"+
                 "</tr>");
         }
@@ -70,6 +70,7 @@
 
                 id_conversacion = respuesta.conversacion;
                 id_oferta = oferta;
+                $("#contenedor-principal").load("widget-conversacion.html");
             },
             error: function (error){
                 $("#alert").remove();
