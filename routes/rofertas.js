@@ -5,6 +5,7 @@ module.exports = function(app, swig, gestorBD) {
      * el fichero que muestra el formulario para añadir ofertas (add.html)
      */
     app.get('/ofertas/agregar', function (req, res) {
+        console.log("[Accediendo a la vista de agregar ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /ofertas/agregar");
         let respuesta = swig.renderFile('views/offers/add.html', {
             saldo: req.session.saldo
         });
@@ -50,6 +51,7 @@ module.exports = function(app, swig, gestorBD) {
      * insertará en la base de datos.
      */
     app.post("/oferta", function(req, res) {
+        console.log("[Añadiendo oferta, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta");
         let errors = [];
         let estaDestacada = false;
         if (req.body.estaDestacada != null) {
@@ -111,10 +113,12 @@ module.exports = function(app, swig, gestorBD) {
      * ofertas que se correspondan con el nombre.
      */
     app.get("/ofertas", function(req, res) {
+        console.log("[Accediendo a la vista de ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /ofertas");
         let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
         let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
+        req.session.busqueda = req.query.busqueda;
         if (req.query.busqueda != null) {
-            criterio = {'titulo': {'$regex': req.query.busqueda }, "vendedor": {"$ne": req.session.usuario }};
+            criterio = {'titulo': {'$regex': ".*" +  req.query.busqueda + ".*", "$options": "i"}, "vendedor": {"$ne": req.session.usuario }};
         }
         let pg = parseInt(req.query.pg);
         if (req.query.pg == null) {
@@ -137,22 +141,27 @@ module.exports = function(app, swig, gestorBD) {
                 if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
-                let paginas = []; // paginas mostrar
-                for (let i = pg - 2; i <= pg + 2; i++) {
-                    if (i > 0 && i <= ultimaPg) {
-                        paginas.push(i);
+                if (pg < 1 || pg > ultimaPg) {
+                    res.redirect("/error" + "?mensaje=Página no válida" + "&tipoMensaje=alert-danger");
+                } else {
+                    let paginas = []; // paginas mostrar
+                    for (let i = pg - 2; i <= pg + 2; i++) {
+                        if (i > 0 && i <= ultimaPg) {
+                            paginas.push(i);
+                        }
                     }
+                    let respuesta = swig.renderFile('views/offers/listAll.html',
+                        {
+                            ofertas: ofertas,
+                            ofertasDestacadas: ofertasDestacadasView,
+                            saldo: req.session.saldo,
+                            paginas: paginas,
+                            actual: pg,
+                            email: req.session.usuario,
+                            busqueda: req.session.busqueda
+                        });
+                    res.send(respuesta);
                 }
-                let respuesta = swig.renderFile('views/offers/listAll.html',
-                    {
-                        ofertas: ofertas,
-                        ofertasDestacadas: ofertasDestacadasView,
-                        saldo: req.session.saldo,
-                        paginas: paginas,
-                        actual: pg,
-                        email: req.session.usuario
-                    });
-                res.send(respuesta);
             }
         });
     });
@@ -163,6 +172,7 @@ module.exports = function(app, swig, gestorBD) {
      * se volverá a las ofertas propias.
      */
     app.get("/oferta/eliminar/:id", function(req, res) {
+        console.log("[Eliminando ofertas , usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta/eliminar/id");
         let criterio = {$and:[{"_id": gestorBD.mongo.ObjectID(req.params.id)}, {"comprador" : null}]}
         gestorBD.eliminarOferta(criterio, function (oferta) {
             if (oferta == null) {
@@ -184,6 +194,7 @@ module.exports = function(app, swig, gestorBD) {
      * al usuario con el nuevo sueldo que tendrá)
      */
     app.get("/oferta/comprar/:id", function(req, res) {
+        console.log("[Comprando ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta/comprar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         let usuario = req.session.usuario;
@@ -242,6 +253,7 @@ module.exports = function(app, swig, gestorBD) {
      * utilizando como parámetros los dos criterios y un false indicando que se quiere no destacar la oferta.
      */
     app.post('/oferta/nodestacar/:id', function (req, res) {
+        console.log("[Quitando la oferta de destacados, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /oferta/nodestacar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         destacarOferta(criterio, criterioUsuarios, false, req, res);
@@ -254,6 +266,7 @@ module.exports = function(app, swig, gestorBD) {
      * utilizando como parámetros los dos criterios y un true indicando que se quiere destacar la oferta.
      */
     app.post('/oferta/destacar/:id', function (req, res) {
+        console.log("[Destacando la oferta, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /oferta/destacar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         destacarOferta(criterio, criterioUsuarios, true, req, res);

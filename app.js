@@ -56,6 +56,7 @@ gestorBD.init(app,mongo);
 // routerUsuarioToken
 let routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function(req, res, next) {
+    console.log("routerUsuarioToken");
     // obtener el token, vía headers (opcionalmente GET y/o POST).
     let token = req.headers['token'] || req.body.token || req.query.token;
     if (token != null) {
@@ -91,12 +92,14 @@ app.use('/api/ofertas', routerUsuarioToken);
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
+    console.log("routerUsuarioSession");
     if ( req.session.usuario ) {
         if (!req.session.admin) {
             // dejamos correr la petición
             next();
         }
     } else {
+        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -112,12 +115,14 @@ app.use("/oferta/comprar",routerUsuarioSession);
 // routerUsuarioSessionAdmin
 let routerUsuarioSessionAdmin = express.Router();
 routerUsuarioSessionAdmin.use(function(req, res, next) {
+    console.log("routerUsuarioSessionAdmin");
     if ( req.session.usuario ) {
         if (req.session.admin ) {
             // dejamos correr la petición
             next();
         }
     } else {
+        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -129,10 +134,12 @@ app.use("/usuarios",routerUsuarioSessionAdmin);
 // routerUsuarioSessionBase
 let routerUsuarioSessionBase = express.Router();
 routerUsuarioSessionBase.use(function(req, res, next) {
+    console.log("routerUsuarioSessionBase");
     if ( req.session.usuario ) {
             // dejamos correr la petición
             next();
     } else {
+        console.log("va a : "+req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -145,7 +152,9 @@ app.use("/desconectarse",routerUsuarioSessionBase);
 // routerNoHayUsuario
 let routerNoHayUsuario = express.Router();
 routerNoHayUsuario.use(function(req, res, next) {
+    console.log("routerNoHayUsuario");
     if ( req.session.usuario ) {
+        console.log("va a : "+req.session.destino)
         res.redirect("/home");
     } else {
         next();
@@ -166,6 +175,7 @@ routerUsuarioVendedor.use(function(req, res, next) {
             if(ofertas[0].vendedor === req.session.usuario ){
                 next();
             } else {
+                console.log("va a : "+req.session.destino)
                 res.redirect("/ofertas");
             }
         })

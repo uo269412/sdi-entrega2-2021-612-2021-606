@@ -4,6 +4,7 @@ module.exports = function(app, swig, gestorBD) {
      * pueda utilizar el formulario para registrarse y entrar dentro de la aplicación
      */
     app.get("/registrarse", function(req, res) {
+        console.log("[Accediendo a la vista para registrarse, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /registrarse");
         let respuesta = swig.renderFile('views/signup.html', {});
         res.send(respuesta);
     });
@@ -80,6 +81,7 @@ module.exports = function(app, swig, gestorBD) {
                                 req.session.usuario = usuario.email;
                                 req.session.saldo = usuario.saldo;
                                 req.session.admin = usuario.admin;
+                                console.log("[Registrando usuario, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /usuario");
                                 res.redirect("/home");
                             }
                         });
@@ -121,6 +123,7 @@ module.exports = function(app, swig, gestorBD) {
                         req.session.usuario = usuarios[0].email;
                         req.session.saldo = usuarios[0].saldo;
                         req.session.admin = usuarios[0].admin;
+                        console.log("[Identificandose, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /identificarse");
                         if (usuarios[0].admin === true){
                             res.redirect("/usuarios");
                         }
@@ -158,6 +161,7 @@ module.exports = function(app, swig, gestorBD) {
      * pueda utilizar el formulario para identificarse y entrar dentro de la aplicación
      */
     app.get("/identificarse", function(req, res) {
+        console.log("[Accediendo a la vista para identificarse, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /identificarse");
         let respuesta = swig.renderFile('views/login.html', {});
         res.send(respuesta);
     });
@@ -169,6 +173,7 @@ module.exports = function(app, swig, gestorBD) {
      * que las lista.
      */
     app.get("/propias", function(req, res) {
+        console.log("[Listado de ofertas propias, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /propias");
         let criterio = { vendedor : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (ofertas == null || ofertas.length === 0) {
@@ -193,6 +198,7 @@ module.exports = function(app, swig, gestorBD) {
      * que las lista.
      */
     app.get("/compras", function(req, res) {
+        console.log("[Listado de compras, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /compras");
         let criterio = { comprador : req.session.usuario };
         gestorBD.obtenerOfertas(criterio, function(ofertas) {
             if (ofertas == null || ofertas.length === 0) {
@@ -216,6 +222,7 @@ module.exports = function(app, swig, gestorBD) {
      * y se los pasará a la vista list.html
      */
     app.get("/usuarios", function(req, res) {
+        console.log("[Listado de usuarios, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /usuarios");
         let criterio = {admin: false};
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length === 0) {
@@ -236,6 +243,7 @@ module.exports = function(app, swig, gestorBD) {
      * Este controlador recibe la petición GET /desconectarse, que desloggeará al usuario y redireccionará al index.html
      */
     app.get('/desconectarse', function (req, res) {
+        console.log("[Desconectando, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /desconectarse");
         req.session.usuario = null;
         req.session.saldo = null;
         req.session.admin = null;
@@ -247,6 +255,7 @@ module.exports = function(app, swig, gestorBD) {
      * desde la cual podrá borrar aquellos seleccionados, además de borrar sus ofertas que no se hayan vendido
      */
     app.post('/usuarios/eliminar', function (req, res) {
+        console.log("[Eliminando usuarios, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /usuarios/eliminar");
         let criterio = [];
         if (typeof req.body.deleteUser === "string"){
             criterio.push({"_id": gestorBD.mongo.ObjectID(req.body.deleteUser)});
@@ -283,10 +292,5 @@ module.exports = function(app, swig, gestorBD) {
                 });
             }
         });
-
-
-
     });
-
-
 };

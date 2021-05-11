@@ -4,6 +4,7 @@ module.exports = function(app, gestorBD) {
      *
      */
     app.get("/resetDatabase", function(req, res) {
+        console.log("[Reseteando la base de datos]");
         gestorBD.eliminarTodo(function (eliminado) {
             if (eliminado == null) {
                 res.status(500);
@@ -18,6 +19,7 @@ module.exports = function(app, gestorBD) {
      * Luego creará usuarios que son obligatorios para los tests.
      */
     app.get("/restoreDatabase", function(req, res) {
+        console.log("[Restaurando la base de datos]");
         gestorBD.eliminarTodo(function (eliminado) {
             if (eliminado == null) {
                 res.status(500);
