@@ -7,6 +7,7 @@ module.exports = function(app, gestorBD) {
      * errores, se enseñarían estos
      */
     app.get("/api/conversaciones/interesado", function (req, res) {
+        console.log("[Accediendo al listado de conversaciones del usuario como interesado, usuario: " + res.usuario + "] -> METHOD: GET, PATH: /api/conversaciones/interesado");
         let errors = [];
         let criterio = {"interesado": res.usuario}
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
@@ -29,6 +30,7 @@ module.exports = function(app, gestorBD) {
      * errores, se enseñarían estos
      */
     app.get("/api/conversaciones/propietario", function (req, res) {
+        console.log("[Accediendo al listado de conversaciones del usuario como propietario, usuario: " + res.usuario + "] -> METHOD: GET, PATH: /api/conversaciones/propietario");
         let errors = [];
         let criterio = {"propietario": res.usuario}
         gestorBD.obtenerConversaciones(criterio, function (conversaciones) {
@@ -51,6 +53,7 @@ module.exports = function(app, gestorBD) {
      * cuales no han sido enviados por él).
      */
     app.get("/api/conversacion/noleidos/:id", function(req, res) {
+        console.log("[Accediendo al listado de mensajes no leídos de una conversación en específico, usuario: " + res.usuario + "] -> METHOD: GET, PATH: /api/conversacion/noleidos/:id");
         let errors = [];
         let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), res.usuario, function(tienePermiso) {
@@ -95,6 +98,7 @@ module.exports = function(app, gestorBD) {
      * En el caso de que en uno de estos pasos haya errores, se mostrarán.
      */
     app.get("/api/conversacion/:id", function(req, res) {
+        console.log("[Accediendo al listado de mensajes de una conversación en específico, usuario: " + res.usuario + "] -> METHOD: GET, PATH: /api/conversacion/:id");
         let errors = [];
         let criterioConversaciones = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         usuarioInteresadoPropietario(gestorBD.mongo.ObjectID(req.params.id), res.usuario, function(tienePermiso) {
@@ -141,6 +145,7 @@ module.exports = function(app, gestorBD) {
      * haya errores, se mostrarán
      */
     app.delete("/api/conversacion/:id", function(req, res) {
+        console.log("[Borrando la conversación y los mensajes, usuario: " + res.usuario + "] -> METHOD: DELETE, PATH: /api/conversacion/:id");
         let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)}
         let usuarioSesion = res.usuario;
         let errors = [];

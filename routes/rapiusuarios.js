@@ -4,6 +4,7 @@ module.exports = function(app, gestorBD) {
      * de autenticar al usuario, asigándole un tokem en el caso de que el loggeo sea correcto.
      */
     app.post("/api/autenticar/", function(req, res) {
+        console.log("[Autenticando usuario, usuario: " + req.body.email + "] -> METHOD: POST, PATH: /api/autenticar");
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {

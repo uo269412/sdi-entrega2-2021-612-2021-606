@@ -14,6 +14,7 @@ module.exports = function(app, gestorBD) {
      *  haciendo referencia al nuevo id de la conversación que acabamos de crear.
      */
     app.post("/api/mensaje/:id", function (req, res) {
+        console.log("[Enviando mensaje a la oferta, usuario: " + res.usuario + "] -> METHOD: POST, PATH: /api/mensaje/:id");
         let errors = [];
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         gestorBD.obtenerOfertas(criterio, function (ofertas) {
@@ -52,14 +53,12 @@ module.exports = function(app, gestorBD) {
                                     res.json({
                                         conversacion: conversacion
                                     })
-
                                 }
                             });
                         }
                     } else {
                         insertarMensaje(gestorBD.mongo.ObjectID(conversaciones[0]._id), errors, req, res);
                         res.status(201);
-
                     }
                 });
             }
@@ -72,6 +71,7 @@ module.exports = function(app, gestorBD) {
      * de realizar esta operación.
      */
     app.put("/api/mensaje/:id", function(req, res) {
+        console.log("[Actualizando el mensaje a leído, usuario: " + res.usuario + "] -> METHOD: PUT, PATH: /api/mensaje/:id");
         let mensaje = {
             leido: true
         }; // Solo los atributos a modificar

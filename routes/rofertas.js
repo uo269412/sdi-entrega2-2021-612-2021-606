@@ -5,6 +5,7 @@ module.exports = function(app, swig, gestorBD) {
      * el fichero que muestra el formulario para añadir ofertas (add.html)
      */
     app.get('/ofertas/agregar', function (req, res) {
+        console.log("[Accediendo a la vista de agregar ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /ofertas/agregar");
         let respuesta = swig.renderFile('views/offers/add.html', {
             saldo: req.session.saldo
         });
@@ -50,6 +51,7 @@ module.exports = function(app, swig, gestorBD) {
      * insertará en la base de datos.
      */
     app.post("/oferta", function(req, res) {
+        console.log("[Añadiendo oferta, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta");
         let errors = [];
         let estaDestacada = false;
         if (req.body.estaDestacada != null) {
@@ -111,6 +113,7 @@ module.exports = function(app, swig, gestorBD) {
      * ofertas que se correspondan con el nombre.
      */
     app.get("/ofertas", function(req, res) {
+        console.log("[Accediendo a la vista de ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /ofertas");
         let criterio = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : false}]}
         let criterioDestacadas = {$and:[{ "vendedor": {"$ne": req.session.usuario } }, {"destacada" : true}]}
         req.session.busqueda = req.query.busqueda;
@@ -169,6 +172,7 @@ module.exports = function(app, swig, gestorBD) {
      * se volverá a las ofertas propias.
      */
     app.get("/oferta/eliminar/:id", function(req, res) {
+        console.log("[Eliminando ofertas , usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta/eliminar/id");
         let criterio = {$and:[{"_id": gestorBD.mongo.ObjectID(req.params.id)}, {"comprador" : null}]}
         gestorBD.eliminarOferta(criterio, function (oferta) {
             if (oferta == null) {
@@ -190,6 +194,7 @@ module.exports = function(app, swig, gestorBD) {
      * al usuario con el nuevo sueldo que tendrá)
      */
     app.get("/oferta/comprar/:id", function(req, res) {
+        console.log("[Comprando ofertas, usuario: " + req.session.usuario + "] -> METHOD: GET, PATH: /oferta/comprar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         let usuario = req.session.usuario;
@@ -248,6 +253,7 @@ module.exports = function(app, swig, gestorBD) {
      * utilizando como parámetros los dos criterios y un false indicando que se quiere no destacar la oferta.
      */
     app.post('/oferta/nodestacar/:id', function (req, res) {
+        console.log("[Quitando la oferta de destacados, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /oferta/nodestacar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         destacarOferta(criterio, criterioUsuarios, false, req, res);
@@ -260,6 +266,7 @@ module.exports = function(app, swig, gestorBD) {
      * utilizando como parámetros los dos criterios y un true indicando que se quiere destacar la oferta.
      */
     app.post('/oferta/destacar/:id', function (req, res) {
+        console.log("[Destacando la oferta, usuario: " + req.session.usuario + "] -> METHOD: POST, PATH: /oferta/destacar/id");
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         let criterioUsuarios = {"email": req.session.usuario};
         destacarOferta(criterio, criterioUsuarios, true, req, res);
